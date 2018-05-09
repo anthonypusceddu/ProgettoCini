@@ -19,12 +19,13 @@ public class GlobalRank extends BaseRichBolt {
     private List<Incrocio> globalRanking;
     @Override
     public void prepare(Map map, TopologyContext topologyContext, OutputCollector outputCollector) {
-        this.collector = collector;
+        this.collector = outputCollector;
         globalRanking = new ArrayList<>();
     }
 
     @Override
     public void execute(Tuple tuple) {
+        
         List<Incrocio> list=(List<Incrocio>)tuple.getValueByField("classificaparziale");
         if(globalRanking.isEmpty()) {
             globalRanking = list;
