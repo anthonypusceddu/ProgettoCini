@@ -1,11 +1,10 @@
 package com.example.demo.bolt;
 
-import com.example.demo.Incrocio;
-import com.example.demo.SensoreSemaforo;
+import com.example.demo.entity.Incrocio;
+import com.example.demo.entity.SensoreSemaforo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.org.apache.xerces.internal.impl.xs.util.LSInputListImpl;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;

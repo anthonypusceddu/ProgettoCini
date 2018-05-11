@@ -15,8 +15,6 @@ public class prova {
             TDigest td1 = new AVLTreeDigest(100);
             MergingDigest m= new MergingDigest(100);
 
-            
-
             td1.add(1);
             td1.add(2);
             td1.add(3);

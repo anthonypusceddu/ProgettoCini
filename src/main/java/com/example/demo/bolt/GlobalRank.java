@@ -1,7 +1,7 @@
 package com.example.demo.bolt;
 
 import com.example.demo.ComparatoreIncrocio;
-import com.example.demo.Incrocio;
+import com.example.demo.entity.Incrocio;
 import com.example.demo.costant.Costant;
 import org.apache.storm.shade.org.apache.commons.collections.ListUtils;
 import org.apache.storm.task.OutputCollector;

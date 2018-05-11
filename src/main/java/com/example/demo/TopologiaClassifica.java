@@ -5,6 +5,7 @@ import com.example.demo.bolt.FilterBolt;
 import com.example.demo.bolt.GlobalRank;
 import com.example.demo.bolt.IntermediateRank;
 import com.example.demo.costant.Costant;
+import com.example.demo.entity.Produttore;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;

@@ -1,10 +1,16 @@
-package com.example.demo;
+package com.example.demo.entity;
 
-import com.example.demo.entity.Incrocio;
-
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
-public class ComparatoreIncrocio implements Comparator<Incrocio> {
+public class Rank implements Comparator<Incrocio> {
+    private List<Incrocio> listIntersection;
+
+    public Rank(){
+        listIntersection= new ArrayList<Incrocio>();
+    }
+
     @Override
     public int compare(Incrocio incrocio, Incrocio t1) {
         if ( incrocio.getVelocitàMedia() > t1.getVelocitàMedia() )
@@ -14,6 +20,4 @@ public class ComparatoreIncrocio implements Comparator<Incrocio> {
         else
             return 0;
     }
-
-
 }

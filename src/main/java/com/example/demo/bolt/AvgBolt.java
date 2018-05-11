@@ -1,6 +1,6 @@
 package com.example.demo.bolt;
 
-import com.example.demo.Incrocio;
+import com.example.demo.entity.Incrocio;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
