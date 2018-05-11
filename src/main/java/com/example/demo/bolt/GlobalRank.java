@@ -34,9 +34,7 @@ public class GlobalRank extends BaseRichBolt {
         else{
             sortOrderedRank(globalRanking,list);
             collector.emit(new Values(globalRanking));
-
         }
-
     }
 
     private void sortOrderedRank(List<Incrocio> globalRanking, List<Incrocio> list) {
