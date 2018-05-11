@@ -30,8 +30,7 @@ public class GlobalRank extends BaseRichBolt {
     public void execute(Tuple tuple) {
         countIntermediateRank++;
         if(countIntermediateRank > Costant.NUM_INTERMEDIATERANK) {
-            globalRanking = null;
-            globalRanking = new ArrayList<>();
+            globalRanking.clear();
             countIntermediateRank = 0;
         }
         Rank rank=(Rank)tuple.getValueByField("classificaparziale");
