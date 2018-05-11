@@ -6,6 +6,7 @@ public class Incrocio {
     private List<SensoreSemaforo> l;
     private int id;
     private float VelocitàMedia;
+    private double medianaVeicoli;
     private int numeroVeicoli;
 
     public Incrocio(List<SensoreSemaforo> l, int id) {
@@ -44,5 +45,13 @@ public class Incrocio {
 
     public void setNumeroVeicoli(int numeroVeicoli) {
         this.numeroVeicoli = numeroVeicoli;
+    }
+
+    public double getMedianaVeicoli() {
+        return medianaVeicoli;
+    }
+
+    public void setMedianaVeicoli(double medianaVeicoli) {
+        this.medianaVeicoli = medianaVeicoli;
     }
 }
