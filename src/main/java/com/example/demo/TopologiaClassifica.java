@@ -4,6 +4,7 @@ import com.example.demo.bolt.AvgBolt;
 import com.example.demo.bolt.FilterBolt;
 import com.example.demo.bolt.GlobalRank;
 import com.example.demo.bolt.IntermediateRank;
+import com.example.demo.costant.Costant;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -59,10 +60,10 @@ public class TopologiaClassifica {
     protected StormTopology getTopologyKafkaSpout(KafkaSpoutConfig<String, String> spoutConfig) {
         final TopologyBuilder tp = new TopologyBuilder();
         tp.setSpout("kafka_spout", new KafkaSpout<>(spoutConfig), 1);
-        tp.setBolt("filterBolt",new FilterBolt(),1).shuffleGrouping("kafka_spout");
-        tp.setBolt("avgBolt", new AvgBolt().withTumblingWindow(Duration.of(10000)),3)
+        tp.setBolt("filterBolt",new FilterBolt(),Costant.NUM_FILTER).shuffleGrouping("kafka_spout");
+        tp.setBolt("avgBolt", new AvgBolt().withTumblingWindow(Duration.of(Costant.WINDOW_MIN_TEST)),Costant.NUM_AVG)
                 .fieldsGrouping("filterBolt", new Fields("id"));
-        tp.setBolt("intermediateRanking", new IntermediateRank(),5)
+        tp.setBolt("intermediateRanking", new IntermediateRank(), Costant.NUM_INTERMEDIATERANK)
                 .fieldsGrouping("filterBolt",new Fields("id"));
         tp.setBolt("globalRank", new GlobalRank(),1)
                 .allGrouping("intermediateRanking");

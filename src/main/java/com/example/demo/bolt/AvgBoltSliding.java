@@ -10,19 +10,19 @@ import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
 import org.apache.storm.windowing.TupleWindow;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class AvgBolt extends BaseWindowedBolt {
-
+public class AvgBoltSliding extends BaseWindowedBolt {
     private OutputCollector collector;
     private HashMap<Integer, Incrocio> mappa;
-
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("listaincroci"));
     }
-
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
@@ -30,29 +30,6 @@ public class AvgBolt extends BaseWindowedBolt {
         mappa = new HashMap<>();
     }
 
-    @Override
-    public void execute(TupleWindow inputWindow) {
-
-        System.out.println("/n/n");
-        List<Tuple> tupleList = inputWindow.get();
-        for ( Tuple t : tupleList){
-            Incrocio l = (Incrocio) t.getValueByField("incrocio");
-            if(mappa.containsKey(l.getId())){
-                mappa.put(l.getId(), processAvg(mappa.get(l.getId()),l));
-            }
-            else{
-                mappa.put(l.getId(),l);
-            }
-        }
-        System.out.println("/n/n");
-
-        List<Incrocio> classifica = createList(mappa);
-        System.out.println("/n/n");
-
-        System.out.println(classifica);
-        collector.emit(new Values(classifica));
-
-    }
 
     private List<Incrocio> createList(HashMap<Integer,Incrocio> mappa){
         List<Incrocio> classifica = new ArrayList<>();
@@ -72,5 +49,18 @@ public class AvgBolt extends BaseWindowedBolt {
         i.setNumeroVeicoli(nTot);
         return i;
     }
+
+    @Override
+    public void execute(TupleWindow inputWindow) {
+
+        for(Tuple tuple: inputWindow.get()) {
+
+
+        }
+        // emit the results
+        collector.emit(new Values());
+    }
+
+
 }
 

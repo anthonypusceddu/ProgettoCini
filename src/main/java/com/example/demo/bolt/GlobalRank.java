@@ -16,16 +16,23 @@ import java.util.*;
 
 public class GlobalRank extends BaseRichBolt {
     private OutputCollector collector;
+    private int countIntermediateRank;
     private List<Incrocio> globalRanking;
     @Override
     public void prepare(Map map, TopologyContext topologyContext, OutputCollector outputCollector) {
         this.collector = outputCollector;
         globalRanking = new ArrayList<>();
+        countIntermediateRank = 0;
     }
 
     @Override
     public void execute(Tuple tuple) {
-        
+        countIntermediateRank++;
+        if(countIntermediateRank > Costant.NUM_INTERMEDIATERANK) {
+            globalRanking = null;
+            globalRanking = new ArrayList<>();
+            countIntermediateRank = 0;
+        }
         List<Incrocio> list=(List<Incrocio>)tuple.getValueByField("classificaparziale");
         if(globalRanking.isEmpty()) {
             globalRanking = list;

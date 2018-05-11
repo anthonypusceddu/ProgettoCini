@@ -12,9 +12,7 @@ import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.*;
 import java.util.Map;
 
 public class IntermediateRank extends BaseRichBolt {
@@ -37,7 +35,6 @@ public class IntermediateRank extends BaseRichBolt {
         Collections.sort(list,new ComparatoreIncrocio());
         if(list.size() > Costant.TOP_K)
             list= list.subList(0, Costant.TOP_K-1);
-
         collector.emit(new Values(list));
     }
 }

@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import com.tdunning.math.stats.AVLTreeDigest;
 import com.tdunning.math.stats.MergingDigest;
 import com.tdunning.math.stats.TDigest;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -23,7 +25,7 @@ public class prova {
             td1.add(6);
             System.out.println(td1.getMax());
             System.out.println(td1.quantile(0.5));
-            for(int i=7;i!=1000000;i++){
+            for(int i=7;i!=100;i++){
                 td1.add(i);
                 System.out.println(td1.quantile(0.5));
                 System.out.println(td1.size());
