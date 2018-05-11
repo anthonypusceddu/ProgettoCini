@@ -12,6 +12,7 @@ public class Costant {
     public static final int NUM_FILTER = 1;
     public static final int NUM_AVG = 3;
     public static final int SEC_TUPLE = 60;
+    public static final int COMPRESSION = 100;
     public static final double QUANTIL = 0.5;
 
 }
