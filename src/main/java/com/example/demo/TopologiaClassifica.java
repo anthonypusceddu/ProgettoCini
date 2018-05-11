@@ -41,10 +41,10 @@ public class TopologiaClassifica {
         Config tpConf = getConfig();
 
 
-        // Produttore
+        /*// Produttore
         Produttore p = new Produttore();
         p.inviaRecord();
-        p.terminaProduttore();
+        p.terminaProduttore();*/
 
         // run local cluster
         tpConf.setMaxTaskParallelism(1);
@@ -65,7 +65,7 @@ public class TopologiaClassifica {
         tp.setBolt("avgBolt", new AvgBolt().withTumblingWindow(Duration.of(Costant.WINDOW_MIN_TEST)),Costant.NUM_AVG)
                 .fieldsGrouping("filterBolt", new Fields("id"));
         tp.setBolt("intermediateRanking", new IntermediateRank(), Costant.NUM_INTERMEDIATERANK)
-                .fieldsGrouping("filterBolt",new Fields("id"));
+                .fieldsGrouping("avgBolt",new Fields("id"));
         tp.setBolt("globalRank", new GlobalRank(),1)
                 .allGrouping("intermediateRanking");
         return tp.createTopology();

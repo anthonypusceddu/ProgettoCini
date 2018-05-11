@@ -1,6 +1,7 @@
 package com.example.demo.bolt;
 
 import com.example.demo.entity.Incrocio;
+import com.example.demo.entity.Rank;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
@@ -20,7 +21,7 @@ public class AvgBolt extends BaseWindowedBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("listaincroci"));
+        declarer.declare(new Fields("id","listaincroci"));
     }
 
 
@@ -50,8 +51,7 @@ public class AvgBolt extends BaseWindowedBolt {
         System.out.println("/n/n");
 
         System.out.println(classifica);
-        collector.emit(new Values(classifica));
-
+        collector.emit(new Values(classifica.get(0).getId(),new Rank(classifica)));
     }
 
     private List<Incrocio> createList(HashMap<Integer,Incrocio> mappa){

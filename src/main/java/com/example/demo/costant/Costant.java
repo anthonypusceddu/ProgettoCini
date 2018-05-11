@@ -5,7 +5,7 @@ public class Costant {
     public static final int N_INTERSECTIONS = 50;
     public static final int SEM_INTERSEC = 4;
     public static final int WINDOW_MIN = 15; //msec
-    public static final int WINDOW_MIN_TEST = WINDOW_MIN*10000; //msec
+    public static final int WINDOW_MIN_TEST = WINDOW_MIN*100; //msec
     public static final int WINDOW_HOUR = 1;
     public static final int WINDOWS_DAY = 1;
     public static final int NUM_INTERMEDIATERANK = 5;

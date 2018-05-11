@@ -3,6 +3,7 @@ package com.example.demo.bolt;
 import com.example.demo.ComparatoreIncrocio;
 import com.example.demo.entity.Incrocio;
 import com.example.demo.costant.Costant;
+import com.example.demo.entity.Rank;
 import org.apache.storm.shade.org.apache.commons.collections.ListUtils;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
@@ -33,7 +34,8 @@ public class GlobalRank extends BaseRichBolt {
             globalRanking = new ArrayList<>();
             countIntermediateRank = 0;
         }
-        List<Incrocio> list=(List<Incrocio>)tuple.getValueByField("classificaparziale");
+        Rank rank=(Rank)tuple.getValueByField("classificaparziale");
+        List<Incrocio> list=rank.getListIntersection();
         if(globalRanking.isEmpty()) {
             globalRanking = list;
             collector.emit(new Values(globalRanking));
