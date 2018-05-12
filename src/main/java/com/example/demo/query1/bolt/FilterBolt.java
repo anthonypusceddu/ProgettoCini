@@ -1,5 +1,6 @@
 package com.example.demo.query1.bolt;
 
+import com.example.demo.costant.Costant;
 import com.example.demo.query1.entity.Incrocio;
 import com.example.demo.query1.entity.SensoreSemaforo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public class FilterBolt extends BaseRichBolt {
-
+//il filter bolt riceve semafori e invia incroci quando essi sono completi
     private OutputCollector collector;
     private SensoreSemaforo s;
     private ObjectMapper mapper = new ObjectMapper();
@@ -29,7 +30,7 @@ public class FilterBolt extends BaseRichBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("id","incrocio"));
+        declarer.declare(new Fields("id","incrocio"));//?perchè serve anche incrocio se l'avg bolt ha fieldgrouping by id
     }
 
 
@@ -51,24 +52,25 @@ public class FilterBolt extends BaseRichBolt {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        if ( mappa.containsKey(s.getIncrocio()) ){
+        if ( mappa.containsKey(s.getIncrocio()) ){//incrocio esiste in hasmap
             Incrocio c;
-            c = mappa.get(s.getIncrocio());
-            c.getL().add(s);
-            if ( c.getL().size() == 4 ){
-                mappa.remove(s.getIncrocio());
-                media(c);
-                collector.emit(new Values( s.getIncrocio(), inc ) );
+            c = mappa.get(s.getIncrocio());//prendi incrocio dall'hashmap
+            c.getL().add(s);//aggiungi il semaforo all'incrocio
+            if ( c.getL().size() == Costant.SEM_INTERSEC ){//se l'incrocio è completo
+                mappa.remove(s.getIncrocio());//rimuovi l'incrocio dall'hashmap
+                media(c);//calcola la media
+                inc=c;
+                collector.emit(new Values( s.getIncrocio(), inc ) );//emetti l'incrocio
             }
-            else{
+            else{//?
                 mappa.put(s.getIncrocio(), inc);
             }
         }
-        else {
+        else {//l'incrocio non esiste in hashmap
             lista = new ArrayList<>();
             lista.add(s);
-            inc = new Incrocio(lista, s.getIncrocio());
-            mappa.put(s.getIncrocio(), inc );
+            inc = new Incrocio(lista, s.getIncrocio());//crea incrocio con il semaforo ricevuto
+            mappa.put(s.getIncrocio(), inc );//metti in hashmap l'incrocio
         }
         System.out.println("/n/n");
     }
@@ -76,7 +78,7 @@ public class FilterBolt extends BaseRichBolt {
     private void media(Incrocio c) {
         float somma = 0F;
         int numeroTotaleVeicoli = 0;
-        for ( int i = 0 ; i<4 ; i++){
+        for ( int i = 0 ; i<Costant.SEM_INTERSEC ; i++){
             somma += c.getL().get(i).getVelocità()*c.getL().get(i).getNumeroVeicoli();
             numeroTotaleVeicoli += c.getL().get(i).getNumeroVeicoli();
         }

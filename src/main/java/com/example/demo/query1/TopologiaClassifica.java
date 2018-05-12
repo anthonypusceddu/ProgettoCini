@@ -59,7 +59,7 @@ public class TopologiaClassifica {
 
     protected StormTopology getTopologyKafkaSpout(KafkaSpoutConfig<String, String> spoutConfig) {
         final TopologyBuilder tp = new TopologyBuilder();
-        tp.setSpout("kafka_spout", new KafkaSpout<>(spoutConfig), 1);
+        tp.setSpout("kafka_spout", new KafkaSpout<>(spoutConfig), Costant.NUM_SPOUT_QUERY_1);
         tp.setBolt("filterBolt",new FilterBolt(),Costant.NUM_FILTER).shuffleGrouping("kafka_spout");
         tp.setBolt("avgBolt", new AvgBolt().withTumblingWindow(Duration.of(Costant.WINDOW_MIN_TEST)),Costant.NUM_AVG)
                 .fieldsGrouping("filterBolt", new Fields("id"));

@@ -14,5 +14,5 @@ public class Costant {
     public static final int SEC_TUPLE = 60;
     public static final int COMPRESSION = 100;
     public static final double QUANTIL = 0.5;
-
+    public static final int NUM_SPOUT_QUERY_1=1;
 }

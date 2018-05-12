@@ -18,10 +18,9 @@ public class AvgBolt extends BaseWindowedBolt {
     private OutputCollector collector;
     private HashMap<Integer, Incrocio> mappa;
 
-
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("id","listaincroci"));
+        declarer.declare(new Fields("id","listaincroci"));//?perchè serve anche incrocio se l'avg bolt ha fieldgrouping by id
     }
 
 

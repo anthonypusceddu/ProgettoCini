@@ -56,7 +56,5 @@ public class Produttore {
         Produttore p = new Produttore();
         p.inviaRecord();
         p.terminaProduttore();
-
-
     }
 }

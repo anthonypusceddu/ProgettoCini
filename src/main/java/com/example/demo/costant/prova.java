@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 public class prova {
-
+//prova per il tdigest
     public void tdigest(){
             TDigest td1 = new AVLTreeDigest(100);
             MergingDigest m= new MergingDigest(100);
