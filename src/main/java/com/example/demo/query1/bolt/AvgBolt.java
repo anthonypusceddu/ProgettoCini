@@ -64,7 +64,7 @@ public class AvgBolt extends BaseWindowedBolt {
         return classifica;
     }
 
-    private Incrocio processAvg(Incrocio oldi,Incrocio i){//aggiorna la media
+    private Incrocio processAvg(Incrocio oldi,Incrocio i){//aggiorna la media pesata
         int nTot = oldi.getNumeroVeicoli()+i.getNumeroVeicoli();
         float app=oldi.getVelocitàMedia()*oldi.getNumeroVeicoli()+i.getVelocitàMedia()*i.getNumeroVeicoli();
         i.setVelocitàMedia(app/nTot);
