@@ -1,11 +1,7 @@
 package com.example.demo.query2;
 
-import com.example.demo.ComparatoreIncrocio;
-import com.example.demo.entity.Incrocio;
+import com.example.demo.query1.entity.Incrocio;
 import com.example.demo.costant.Costant;
-import com.example.demo.entity.Rank;
-import com.tdunning.math.stats.AVLTreeDigest;
-import com.tdunning.math.stats.TDigest;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.*;
@@ -13,10 +9,8 @@ import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
-import org.omg.PortableInterceptor.INACTIVE;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

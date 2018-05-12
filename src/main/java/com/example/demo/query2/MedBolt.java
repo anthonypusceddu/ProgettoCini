@@ -1,8 +1,8 @@
 package com.example.demo.query2;
 
 import com.example.demo.costant.Costant;
-import com.example.demo.entity.Incrocio;
-import com.example.demo.entity.Rank;
+import com.example.demo.query1.entity.Incrocio;
+import com.example.demo.query1.entity.Rank;
 import com.tdunning.math.stats.AVLTreeDigest;
 import com.tdunning.math.stats.TDigest;
 import org.apache.storm.task.OutputCollector;

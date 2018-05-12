@@ -1,13 +1,12 @@
 package com.example.demo.query2;
 
 import com.example.demo.costant.Costant;
-import com.example.demo.entity.Incrocio;
-import com.example.demo.entity.SensoreSemaforo;
+import com.example.demo.query1.entity.Incrocio;
+import com.example.demo.query1.entity.SensoreSemaforo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tdunning.math.stats.AVLTreeDigest;
-import com.tdunning.math.stats.MergingDigest;
 import com.tdunning.math.stats.TDigest;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
