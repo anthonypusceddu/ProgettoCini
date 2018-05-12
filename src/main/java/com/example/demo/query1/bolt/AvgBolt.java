@@ -32,6 +32,8 @@ public class AvgBolt extends BaseWindowedBolt {
 
     @Override
     public void execute(TupleWindow inputWindow) {
+        List<Tuple> tupleOldList =inputWindow.getExpired();
+        List<Tuple> tupleNewlist=inputWindow.getNew();
 
         System.out.println("/n/n");
         List<Tuple> tupleList = inputWindow.get();//ottieni la lista di tuple in finestra
@@ -64,11 +66,29 @@ public class AvgBolt extends BaseWindowedBolt {
         return classifica;
     }
 
-    private Incrocio processAvg(Incrocio oldi,Incrocio i){//aggiorna la media pesata
+    private Incrocio processAvg(Incrocio oldi,Incrocio i){//aggiorna la media pesata tra 2 incroci
         int nTot = oldi.getNumeroVeicoli()+i.getNumeroVeicoli();
         float app=oldi.getVelocitàMedia()*oldi.getNumeroVeicoli()+i.getVelocitàMedia()*i.getNumeroVeicoli();
         i.setVelocitàMedia(app/nTot);
         i.setNumeroVeicoli(nTot);
+        return i;
+    }
+    private Incrocio processAvg_with_sliding(List<Incrocio> oldi,Incrocio i,List<Incrocio> newi){//aggiorna la media pesata tra 2 incroci
+        int sumNumOld=0;
+        int sumNumNew=0;
+        float sumVoldNold=0;
+        float sumVnewNnew=0;
+        for ( Incrocio inc : oldi){
+            sumNumOld+=inc.getNumeroVeicoli();
+            sumVoldNold+=inc.getNumeroVeicoli()*inc.getVelocitàMedia();
+        }
+        for ( Incrocio inc2 : newi){
+            sumNumNew+=inc2.getNumeroVeicoli();
+            sumVnewNnew+=inc2.getNumeroVeicoli()*inc2.getVelocitàMedia();
+        }
+        //imposta velocità media
+        i.setVelocitàMedia( (i.getNumeroVeicoli()*i.getVelocitàMedia()-sumVoldNold+sumVnewNnew)/(i.getNumeroVeicoli()-sumNumOld+sumNumNew));
+        i.setNumeroVeicoli(i.getNumeroVeicoli()-sumNumOld+sumNumNew);//imposta numero veicoli
         return i;
     }
 }

@@ -61,7 +61,7 @@ public class TopologiaClassifica {
         final TopologyBuilder tp = new TopologyBuilder();
         tp.setSpout("kafka_spout", new KafkaSpout<>(spoutConfig), Costant.NUM_SPOUT_QUERY_1);
         tp.setBolt("filterBolt",new FilterBolt(),Costant.NUM_FILTER).shuffleGrouping("kafka_spout");
-        tp.setBolt("avgBolt", new AvgBolt().withTumblingWindow(Duration.of(Costant.WINDOW_MIN_TEST)),Costant.NUM_AVG)
+        tp.setBolt("avgBolt", new AvgBolt().withWindow(Duration.of(Costant.WINDOW_MIN_TEST),Duration.of(Costant.SEC_TUPLE)),Costant.NUM_AVG)
                 .fieldsGrouping("filterBolt", new Fields("id"));
         tp.setBolt("intermediateRanking", new IntermediateRank(), Costant.NUM_INTERMEDIATERANK)
                 .fieldsGrouping("avgBolt",new Fields("id"));
