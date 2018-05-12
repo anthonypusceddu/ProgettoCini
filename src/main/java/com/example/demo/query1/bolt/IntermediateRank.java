@@ -31,7 +31,8 @@ public class IntermediateRank extends BaseRichBolt {
     }
 
     @Override
-    public void execute(Tuple input) {
+    public void execute(Tuple input) {//riceve lista di incroci
+        //ordina lista di incroci creando una classifica e invia classifica
         Rank rank= (Rank)input.getValueByField("listaincroci");
         List<Incrocio> list=rank.getListIntersection();
         Collections.sort(list,new ComparatoreIncrocio());
