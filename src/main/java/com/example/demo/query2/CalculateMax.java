@@ -41,11 +41,12 @@ public class CalculateMax extends BaseRichBolt {
 
 
         count++;
-        if(input.getSourceStreamId().equals("incrocio")){
+        if(input.getSourceStreamId().equals("streamB")){
             List<Incrocio> intersection;
-            intersection= (ArrayList<Incrocio>)input.getValueByField("incrocio");
+            intersection= (ArrayList<Incrocio>)input.getValueByField("listaincroci");
             intersections.addAll(intersection);
         }else{
+            System.out.println("calculatemax:"+input.getSourceStreamId());
             med = (double) input.getValueByField("totalmed");
         }
 

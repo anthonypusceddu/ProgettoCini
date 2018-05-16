@@ -32,7 +32,7 @@ public class IntermediateMed extends BaseRichBolt {
 
     @Override
     public void execute(Tuple input) {
-        List<Incrocio> intersections= (ArrayList<Incrocio>)input.getValueByField("listaincroci");
+        List<Incrocio> intersections= (List<Incrocio>)input.getValueByField("listaincroci");
         TDigest t = new AVLTreeDigest(Costant.COMPRESSION);
         for(int i=0;i!= intersections.size() ;i++){
             t.add(intersections.get(i).getTd1());

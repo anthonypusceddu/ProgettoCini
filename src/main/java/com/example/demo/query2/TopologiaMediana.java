@@ -31,31 +31,31 @@ public class TopologiaMediana {
     }
 
     protected void runMain(String[] args) throws Exception {
-        final String brokerUrl = args.length > 0 ? args[0] : KAFKA_LOCAL_BROKER;
-        System.out.println("Running with broker url: " + brokerUrl);
+     //   final String brokerUrl = args.length > 0 ? args[0] : KAFKA_LOCAL_BROKER;
+      //  System.out.println("Running with broker url: " + brokerUrl);
         Config tpConf = getConfig();
 
-        // Produttore
+        /*// Produttore
         Produttore p = new Produttore();
         p.inviaRecord();
-        p.terminaProduttore();
+        p.terminaProduttore();*/
 
         // run local cluster
         tpConf.setMaxTaskParallelism(1);
         LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology("topologiaMediana", tpConf, getTopologyKafkaSpout(getKafkaSpoutConfig(brokerUrl)));
+        cluster.submitTopology("topologiaMediana2", tpConf, getTopology());
     }
 
     protected Config getConfig() {
         Config config = new Config();
-        config.setDebug(true);
+        config.setDebug(false);
         return config;
     }
 
-    protected StormTopology getTopologyKafkaSpout(KafkaSpoutConfig<String, String> spoutConfig) {
+   /* protected StormTopology getTopologyKafkaSpout(KafkaSpoutConfig<String, String> spoutConfig) {
         final TopologyBuilder tp = new TopologyBuilder();
-        tp.setSpout("kafka_spout", new KafkaSpout<>(spoutConfig), 1);
-        tp.setBolt("filterBoltMed",new FilterBoltMed(),Costant.NUM_FILTER).shuffleGrouping("kafka_spout");
+        tp.setSpout("kafka_spout", new KafkaSpout<>(spoutConfig), Costant.NUM_SPOUT_QUERY_1);
+        tp.setBolt("filterBoltMed",new FilterBoltMed(),Costant.NUM_FILTER).shuffleGrouping("sem");
         tp.setBolt("MedBolt", new MedBolt().withTumblingWindow(Duration.of(Costant.WINDOW_MIN_TEST)),Costant.NUM_AVG)
                 .fieldsGrouping("filterBoltMed", new Fields("id"));
         tp.setBolt("intermediateMed", new IntermediateMed(), Costant.NUM_INTERMEDIATERANK)
@@ -65,6 +65,26 @@ public class TopologiaMediana {
                 .allGrouping("intermediateMed");
         tp.setBolt("calculateMax", new CalculateMax(),1)
                     .allGrouping("GlobalMed").allGrouping("MedBolt");
+        return tp.createTopology();
+    }*/
+
+
+    protected StormTopology getTopology() {
+        final TopologyBuilder tp = new TopologyBuilder();
+        tp.setSpout("sem", new SpoutSem(), 1);
+        tp.setBolt("filterBoltMed", new FilterBoltMed(), Costant.NUM_FILTER).shuffleGrouping("sem");
+        tp.setBolt("MedBolt", new MedBolt().withTumblingWindow(Duration.of(Costant.WINDOW_MIN_TEST)), Costant.NUM_AVG)
+                .fieldsGrouping("filterBoltMed", new Fields("id"));
+       // tp.setBolt("intermediateMed", new IntermediateMed(), Costant.NUM_INTERMEDIATERANK)
+         //       .fieldsGrouping("MedBolt", new Fields("id"));
+        tp.setBolt("intermediateMed", new IntermediateMed(), Costant.NUM_INTERMEDIATERANK)
+                .fieldsGrouping("MedBolt","streamA",new Fields("id"));
+
+
+        tp.setBolt("globalMed", new GlobalMed(), 1)
+                .allGrouping("intermediateMed");
+        tp.setBolt("calculateMax", new CalculateMax(), 1)
+                .allGrouping("globalMed").allGrouping("MedBolt","streamB");
         return tp.createTopology();
     }
 

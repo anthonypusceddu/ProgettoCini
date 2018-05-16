@@ -24,7 +24,10 @@ public class MedBolt extends BaseWindowedBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("id","listaincroci"));
+        declarer.declareStream("streamA",new Fields("id","listaincroci"));
+        declarer.declareStream("streamB",new Fields("id","listaincroci"));
+
+
     }
 
 
@@ -50,11 +53,12 @@ public class MedBolt extends BaseWindowedBolt {
         }
         System.out.println("/n/n");
 
-        List<Incrocio> classifica = createList(mappa);
+        List<Incrocio> listamediane = createList(mappa);
         System.out.println("/n/n");
 
-        System.out.println(classifica);
-        collector.emit(new Values(classifica.get(0).getId(),new Rank(classifica)));
+        System.out.println(listamediane);
+        collector.emit("streamA",new Values(listamediane.get(0).getId(),listamediane));
+        collector.emit("streamB",new Values(listamediane.get(0).getId(),listamediane));
     }
 
     private List<Incrocio> createList(HashMap<Integer,Incrocio> mappa){

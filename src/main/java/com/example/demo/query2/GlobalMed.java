@@ -30,7 +30,11 @@ public class GlobalMed extends BaseRichBolt {
     public void execute(Tuple tuple) {
         countIntermediateMed++;
         t.add((TDigest)tuple.getValueByField("partialmed"));
-        if(countIntermediateMed > Costant.NUM_INTERMEDIATERANK) {
+        System.out.println("cont"+countIntermediateMed);
+
+        if(countIntermediateMed >= Costant.NUM_INTERMEDIATERANK) {
+            System.exit(0);
+            System.out.println("emit globalmed");
             collector.emit(new Values(t.quantile(Costant.QUANTIL)));
             t = null;
             t = new AVLTreeDigest(Costant.COMPRESSION);

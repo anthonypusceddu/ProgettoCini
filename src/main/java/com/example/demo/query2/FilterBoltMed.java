@@ -47,13 +47,14 @@ public class FilterBoltMed extends BaseRichBolt {
         List<SensoreSemaforo> lista = null;
         //controllare integrità tupla e/o semaforo rotto
         System.out.println("/n/n");
-        System.out.println(input.getValueByField("value"));
-        JsonNode jsonNode = (JsonNode) input.getValueByField("value");
-        try {
+        System.out.println(input.getValueByField("sensore"));
+        //JsonNode jsonNode = (JsonNode) input.getValueByField("sensore");
+        SensoreSemaforo s=(SensoreSemaforo) input.getValueByField("sensore");
+        /*try {
             this.s = mapper.treeToValue(jsonNode,SensoreSemaforo.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-        }
+        }*/
         if ( mappa.containsKey(s.getIncrocio()) ){
             Incrocio c;
             c = mappa.get(s.getIncrocio());
