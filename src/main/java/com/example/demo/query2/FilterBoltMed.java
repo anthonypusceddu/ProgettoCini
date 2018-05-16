@@ -78,7 +78,7 @@ public class FilterBoltMed extends BaseRichBolt {
 
     private void mediana(Incrocio c){
         TDigest td1 = new AVLTreeDigest(Costant.COMPRESSION);
-        for(int i=0;i!=4;i++){
+        for(int i=0;i!=4;i++){//cambiare il 4 con Constant. ecc
             td1.add(c.getL().get(i).getNumeroVeicoli());
         }
         c.setMedianaVeicoli(td1.quantile(Costant.QUANTIL));

@@ -22,7 +22,7 @@ import static org.apache.storm.kafka.spout.KafkaSpoutConfig.FirstPollOffsetStrat
 public class TopologiaMediana {
 
     private static final String KAFKA_LOCAL_BROKER = "localhost:9092";
-    public static final String TOPIC_0 = "classifica";
+    public static final String TOPIC_0 = "classifica";// dare nuovo nome per topic e mettere topic_1
     private Properties properties;
 
     public static void main(String[] args) throws Exception {

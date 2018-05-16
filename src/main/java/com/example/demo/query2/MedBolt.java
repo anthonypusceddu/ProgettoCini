@@ -42,11 +42,10 @@ public class MedBolt extends BaseWindowedBolt {
         for ( Tuple t : tupleList){
             Incrocio l = (Incrocio) t.getValueByField("incrocio");
             if(mappa.containsKey(l.getId())){
-                mappa.put(l.getId(), processMed(l));
+                mappa.put(l.getId(), processMed(mappa.get(l.getId()),l));
             }
             else{
                 mappa.put(l.getId(),l);
-                processMed(l);
             }
         }
         System.out.println("/n/n");
@@ -61,18 +60,16 @@ public class MedBolt extends BaseWindowedBolt {
     private List<Incrocio> createList(HashMap<Integer,Incrocio> mappa){
         List<Incrocio> med = new ArrayList<>();
         for (Incrocio i : mappa.values()) {
+            i.setMedianaVeicoli(i.getTd1().quantile(Costant.QUANTIL));
             med.add(i);
             mappa.remove(i);
         }
         return med;
     }
 
-    private Incrocio processMed(Incrocio i){
-        TDigest td1 = new AVLTreeDigest(Costant.COMPRESSION);
-        td1.add(i.getMedianaVeicoli());
-        i.setMedianaVeicoli(td1.quantile(Costant.QUANTIL));
-        i.setTd1(td1);
-        return i;
+    private Incrocio processMed(Incrocio oldi,Incrocio newi){
+        oldi.getTd1().add(newi.getTd1());
+        return oldi;
     }
 }
 
