@@ -33,7 +33,6 @@ public class GlobalMed extends BaseRichBolt {
         System.out.println("cont"+countIntermediateMed);
 
         if(countIntermediateMed >= Costant.NUM_INTERMEDIATERANK) {
-            System.exit(0);
             System.out.println("emit globalmed");
             collector.emit(new Values(t.quantile(Costant.QUANTIL)));
             t = null;
