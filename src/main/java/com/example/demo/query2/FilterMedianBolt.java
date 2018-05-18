@@ -15,6 +15,7 @@ import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
+import org.apache.storm.utils.Utils;
 
 
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ public class FilterMedianBolt extends BaseRichBolt {
             if ( c.getL().size() == Costant.SEM_INTERSEC ){
                 mappa.remove(s.getIncrocio());
                 mediana(c);
+                System.out.println(c.getId());
                 collector.emit(new Values(c.getId(),c ) );
             }
             else{
