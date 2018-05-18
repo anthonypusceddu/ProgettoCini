@@ -16,7 +16,11 @@ import org.apache.storm.windowing.TupleWindow;
 
 import java.util.*;
 
-public class MedBolt extends BaseWindowedBolt {
+public class MedianBolt extends BaseWindowedBolt {
+    //MedianBolt scansiona tutte le tuple incrocio con mediana nella finestra
+    // e crea hashmap con id incrocio,incrocio
+    //l'incrocio nella hashamp contiene la mediana dei dati relativi a quell'incrocio nel tempo
+    //quando i dati in finestra sono finiti invia lista di incroci
 
     private OutputCollector collector;
     private HashMap<Integer, Incrocio> mappa;
@@ -24,10 +28,9 @@ public class MedBolt extends BaseWindowedBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declareStream("streamA",new Fields("id","listaincroci"));
-        declarer.declareStream("streamB",new Fields("id","listaincroci"));
-
-
+        //declarer.declareStream("streamA",new Fields("id","listaincroci"));
+        //declarer.declareStream("streamB",new Fields("id","listaincroci"));
+        declarer.declare(new Fields(Costant.ID,Costant.LIST_INTERSECTION));
     }
 
 
@@ -40,10 +43,9 @@ public class MedBolt extends BaseWindowedBolt {
     @Override
     public void execute(TupleWindow inputWindow) {
 
-        System.out.println("/n/n");
         List<Tuple> tupleList = inputWindow.get();
         for ( Tuple t : tupleList){
-            Incrocio l = (Incrocio) t.getValueByField("incrocio");
+            Incrocio l = (Incrocio) t.getValueByField(Costant.INTERSECTION);
             if(mappa.containsKey(l.getId())){
                 mappa.put(l.getId(), processMed(mappa.get(l.getId()),l));
             }
@@ -51,14 +53,12 @@ public class MedBolt extends BaseWindowedBolt {
                 mappa.put(l.getId(),l);
             }
         }
-        System.out.println("/n/n");
-
         List<Incrocio> listamediane = createList(mappa);
-        System.out.println("/n/n");
 
-        System.out.println(listamediane);
-        collector.emit("streamA",new Values(listamediane.get(0).getId(),listamediane));
-        collector.emit("streamB",new Values(listamediane.get(0).getId(),listamediane));
+        System.out.println("stampo lista mediane" + listamediane);
+        collector.emit(new Values(listamediane.get(0).getId(),listamediane));
+        //collector.emit("streamA",new Values(listamediane.get(0).getId(),listamediane));
+        //collector.emit("streamB",new Values(listamediane.get(0).getId(),listamediane));
     }
 
     private List<Incrocio> createList(HashMap<Integer,Incrocio> mappa){

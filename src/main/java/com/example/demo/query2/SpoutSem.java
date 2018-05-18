@@ -1,5 +1,6 @@
 package com.example.demo.query2;
 
+import com.example.demo.costant.Costant;
 import com.example.demo.query1.entity.SensoreSemaforo;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -16,6 +17,7 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SpoutSem extends BaseRichSpout {
+    //invia le tuple del sensore del semaforo provenienti dagli incroci
     private SpoutOutputCollector collector;
     private Random rand;
 
@@ -27,10 +29,11 @@ public class SpoutSem extends BaseRichSpout {
 
     @Override
     public void nextTuple() {
+        //metodo per inviare tuple ai bolt
         float max = 100F;
         float min = 0F;
         SensoreSemaforo s;
-        Utils.sleep(1000);
+        Utils.sleep(300);
         for (int i = 0; i < 10; i++) {
             for ( int j = 0 ; j < 4 ; j++){
                 s=new SensoreSemaforo(i,j,min + rand.nextFloat() * (max - min), ThreadLocalRandom.current().nextInt(0, 100 + 1)) ;
@@ -41,6 +44,6 @@ public class SpoutSem extends BaseRichSpout {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declare(new Fields("sensore"));
+        outputFieldsDeclarer.declare(new Fields(Costant.SENSOR));
     }
 }

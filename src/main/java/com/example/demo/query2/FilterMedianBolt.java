@@ -22,8 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FilterBoltMed extends BaseRichBolt {
-
+public class FilterMedianBolt extends BaseRichBolt {
+    //bolt filtro riceve tupla di un sensore e invia una tupla incrocio quando ha ricevuto i 4 semafori
+    //dello stesso incrocio
     private OutputCollector collector;
     private SensoreSemaforo s;
     private ObjectMapper mapper = new ObjectMapper();
@@ -32,7 +33,7 @@ public class FilterBoltMed extends BaseRichBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("id","incrocio"));
+        declarer.declare(new Fields(Costant.ID,Costant.INTERSECTION));
     }
 
 
@@ -46,10 +47,8 @@ public class FilterBoltMed extends BaseRichBolt {
     public void execute(Tuple input) {
         List<SensoreSemaforo> lista = null;
         //controllare integrità tupla e/o semaforo rotto
-        System.out.println("/n/n");
-        System.out.println(input.getValueByField("sensore"));
         //JsonNode jsonNode = (JsonNode) input.getValueByField("sensore");
-        SensoreSemaforo s=(SensoreSemaforo) input.getValueByField("sensore");
+        SensoreSemaforo s=(SensoreSemaforo) input.getValueByField(Costant.SENSOR);
         /*try {
             this.s = mapper.treeToValue(jsonNode,SensoreSemaforo.class);
         } catch (JsonProcessingException e) {
@@ -59,7 +58,7 @@ public class FilterBoltMed extends BaseRichBolt {
             Incrocio c;
             c = mappa.get(s.getIncrocio());
             c.getL().add(s);
-            if ( c.getL().size() == 4 ){
+            if ( c.getL().size() == Costant.SEM_INTERSEC ){
                 mappa.remove(s.getIncrocio());
                 mediana(c);
                 collector.emit(new Values( s.getIncrocio(), inc ) );
@@ -74,12 +73,12 @@ public class FilterBoltMed extends BaseRichBolt {
             inc = new Incrocio(lista, s.getIncrocio());
             mappa.put(s.getIncrocio(), inc );
         }
-        System.out.println("/n/n");
     }
 
     private void mediana(Incrocio c){
+        //calcola mediana dell'incrocio
         TDigest td1 = new AVLTreeDigest(Costant.COMPRESSION);
-        for(int i=0;i!=4;i++){//cambiare il 4 con Constant. ecc
+        for(int i=0;i!=Costant.SEM_INTERSEC;i++){//cambiare il 4 con Constant. ecc
             td1.add(c.getL().get(i).getNumeroVeicoli());
         }
         c.setMedianaVeicoli(td1.quantile(Costant.QUANTIL));
