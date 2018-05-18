@@ -26,7 +26,7 @@ public class FilterMedianBolt extends BaseRichBolt {
     //bolt filtro riceve tupla di un sensore e invia una tupla incrocio quando ha ricevuto i 4 semafori
     //dello stesso incrocio
     private OutputCollector collector;
-    private SensoreSemaforo s;
+    //private SensoreSemaforo s;
     //private ObjectMapper mapper = new ObjectMapper();
     private HashMap<Integer, Incrocio> mappa;
     private Incrocio inc;
@@ -63,10 +63,12 @@ public class FilterMedianBolt extends BaseRichBolt {
             if ( c.getL().size() == Costant.SEM_INTERSEC ){
                 mappa.remove(s.getIncrocio());
                 mediana(c);
-                collector.emit(new Values( s.getIncrocio(), inc ) );
+                collector.emit(new Values(c.getId(),c ) );
             }
             else{
-                mappa.put(s.getIncrocio(), inc);
+                //sarebbe più sicuro fare remove e riaggiungere
+                mappa.remove(c.getId());
+                mappa.put(s.getIncrocio(),c);
             }
         }
         else {

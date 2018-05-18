@@ -34,8 +34,8 @@ public class SpoutSem extends BaseRichSpout {
         float min = 0F;
         SensoreSemaforo s;
         Utils.sleep(300);
-        for (int i = 0; i < 10; i++) {
-            for ( int j = 0 ; j < 4 ; j++){
+        for (int i = 0; i < Costant.N_INTERSECTIONS; i++) {
+            for ( int j = 0 ; j < Costant.SEM_INTERSEC ; j++){
                 s=new SensoreSemaforo(i,j,min + rand.nextFloat() * (max - min), ThreadLocalRandom.current().nextInt(0, 100 + 1)) ;
                 collector.emit(new Values(s));
             }

@@ -73,9 +73,9 @@ public class TopologiaMediana {
           //      .fieldsGrouping(Costant.FILTER_QUERY_2, new Fields(Costant.ID));
 
         tp.setBolt(Costant.GLOBAL_MEDIAN, new GlobalMedianBolt(), Costant.NUM_GLOBAL_BOLT)
-               .allGrouping(Costant.MEDIAN_BOLT);
+               .shuffleGrouping(Costant.MEDIAN_BOLT);
         tp.setBolt(Costant.COMPARE_BOLT, new CompareMedianBolt(), Costant.NUM_COMPARE_MEDIAN_BOLT)
-                .allGrouping(Costant.GLOBAL_MEDIAN);
+                .shuffleGrouping(Costant.GLOBAL_MEDIAN);
         return tp.createTopology();
     }
 

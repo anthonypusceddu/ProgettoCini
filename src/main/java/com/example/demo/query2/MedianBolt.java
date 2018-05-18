@@ -30,7 +30,7 @@ public class MedianBolt extends BaseWindowedBolt {
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         //declarer.declareStream("streamA",new Fields("id","listaincroci"));
         //declarer.declareStream("streamB",new Fields("id","listaincroci"));
-        declarer.declare(new Fields(Costant.ID,Costant.LIST_INTERSECTION));
+        declarer.declare(new Fields(Costant.LIST_INTERSECTION));
     }
 
 
@@ -55,8 +55,8 @@ public class MedianBolt extends BaseWindowedBolt {
         }
         List<Incrocio> listamediane = createList(mappa);
 
-        System.out.println("stampo lista mediane" + listamediane);
-        collector.emit(new Values(listamediane.get(0).getId(),listamediane));
+        System.out.println("stampo lista mediane" + listamediane+"size lista "+listamediane.size());
+        collector.emit(new Values(listamediane));
         //collector.emit("streamA",new Values(listamediane.get(0).getId(),listamediane));
         //collector.emit("streamB",new Values(listamediane.get(0).getId(),listamediane));
     }
