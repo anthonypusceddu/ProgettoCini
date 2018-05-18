@@ -12,6 +12,7 @@ import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
+import org.apache.storm.utils.Utils;
 
 import java.util.*;
 
@@ -44,9 +45,11 @@ public class GlobalMedianBolt extends BaseRichBolt {
         }
         if(countMedianBolt >= Costant.NUM_MEDIAN_BOLT) {
             System.out.println("emit globalmed"+globalList);
+            System.out.println(globalList.get(0));
             collector.emit(new Values(globalList,globalTDIgest.quantile(Costant.QUANTIL)));
             countMedianBolt = 0;
-            globalList.clear();
+            globalList=null;
+            globalList=new ArrayList<>();
             globalTDIgest=null;
             globalTDIgest = new AVLTreeDigest(Costant.COMPRESSION);
         }

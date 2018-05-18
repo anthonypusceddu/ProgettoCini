@@ -27,7 +27,7 @@ public class FilterMedianBolt extends BaseRichBolt {
     //dello stesso incrocio
     private OutputCollector collector;
     private SensoreSemaforo s;
-    private ObjectMapper mapper = new ObjectMapper();
+    //private ObjectMapper mapper = new ObjectMapper();
     private HashMap<Integer, Incrocio> mappa;
     private Incrocio inc;
 
@@ -49,11 +49,13 @@ public class FilterMedianBolt extends BaseRichBolt {
         //controllare integrità tupla e/o semaforo rotto
         //JsonNode jsonNode = (JsonNode) input.getValueByField("sensore");
         SensoreSemaforo s=(SensoreSemaforo) input.getValueByField(Costant.SENSOR);
+
         /*try {
             this.s = mapper.treeToValue(jsonNode,SensoreSemaforo.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }*/
+
         if ( mappa.containsKey(s.getIncrocio()) ){
             Incrocio c;
             c = mappa.get(s.getIncrocio());

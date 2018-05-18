@@ -43,6 +43,6 @@ public class CompareMedianBolt extends BaseRichBolt {
             }
         }
         collector.emit(new Values(listMax));
-        listMax.clear();
+
     }
 }
