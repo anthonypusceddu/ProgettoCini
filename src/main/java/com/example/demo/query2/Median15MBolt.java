@@ -16,7 +16,7 @@ import org.apache.storm.windowing.TupleWindow;
 
 import java.util.*;
 
-public class MedianBolt extends BaseWindowedBolt {
+public class Median15MBolt extends BaseWindowedBolt {
     //MedianBolt scansiona tutte le tuple incrocio con mediana nella finestra
     // e crea hashmap con id incrocio,incrocio
     //l'incrocio nella hashamp contiene la mediana dei dati relativi a quell'incrocio nel tempo
@@ -28,8 +28,6 @@ public class MedianBolt extends BaseWindowedBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        //declarer.declareStream("streamA",new Fields("id","listaincroci"));
-        //declarer.declareStream("streamB",new Fields("id","listaincroci"));
         declarer.declare(new Fields(Costant.LIST_INTERSECTION));
     }
 
@@ -55,10 +53,9 @@ public class MedianBolt extends BaseWindowedBolt {
         }
         List<Incrocio> listamediane = createList(mappa);
 
-        System.out.println("stampo lista mediane" + listamediane+"size lista "+listamediane.size());
+        //System.out.println("stampo lista mediane" + listamediane+"size lista "+listamediane.size());
         collector.emit(new Values(listamediane));
-        //collector.emit("streamA",new Values(listamediane.get(0).getId(),listamediane));
-        //collector.emit("streamB",new Values(listamediane.get(0).getId(),listamediane));
+        //System.out.println("ho inviato dal Median15MBolt ");
     }
 
     private List<Incrocio> createList(HashMap<Integer,Incrocio> mappa){

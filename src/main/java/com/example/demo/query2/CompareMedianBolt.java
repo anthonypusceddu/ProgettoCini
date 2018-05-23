@@ -2,8 +2,6 @@ package com.example.demo.query2;
 
 import com.example.demo.query1.entity.Incrocio;
 import com.example.demo.costant.Costant;
-import com.sun.prism.shader.AlphaTextureDifference_Color_AlphaTest_Loader;
-import com.tdunning.math.stats.TDigest;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.*;
@@ -22,7 +20,7 @@ public class CompareMedianBolt extends BaseRichBolt {
     private OutputCollector collector;
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields(Costant.RESULT));
+        declarer.declare(new Fields(Costant.ID,Costant.RESULT));
     }
 
     @Override
@@ -32,8 +30,9 @@ public class CompareMedianBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple input) {
+        String id = (String) input.getValueByField(Costant.ID);
+        //System.out.println("execute CompareMedianBolt");
         List<Incrocio> listMax=new ArrayList<>();
-        System.out.println("execute CompareMedianBolt");
         List<Incrocio> list=(ArrayList<Incrocio>) input.getValueByField(Costant.LIST_INTERSECTION);
         double median=input.getDoubleByField(Costant.MEDIAN);
         System.out.println(list);
@@ -42,7 +41,7 @@ public class CompareMedianBolt extends BaseRichBolt {
                 listMax.add(i);
             }
         }
-        collector.emit(new Values(listMax));
-        System.out.println("dimensione lista "+listMax.size());
+        collector.emit(new Values(id,listMax));
+        //System.out.println("dimensione lista "+listMax.size());
     }
 }

@@ -51,12 +51,6 @@ public class FilterMedianBolt extends BaseRichBolt {
         //JsonNode jsonNode = (JsonNode) input.getValueByField("sensore");
         SensoreSemaforo s=(SensoreSemaforo) input.getValueByField(Costant.SENSOR);
 
-        /*try {
-            this.s = mapper.treeToValue(jsonNode,SensoreSemaforo.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }*/
-
         if ( mappa.containsKey(s.getIncrocio()) ){
             Incrocio c;
             c = mappa.get(s.getIncrocio());
@@ -64,8 +58,8 @@ public class FilterMedianBolt extends BaseRichBolt {
             if ( c.getL().size() == Costant.SEM_INTERSEC ){
                 mappa.remove(s.getIncrocio());
                 mediana(c);
-                System.out.println(c.getId());
                 collector.emit(new Values(c.getId(),c ) );
+                //System.out.println("FilterMedianBoltHaEMesso");
             }
             else{
                 //sarebbe più sicuro fare remove e riaggiungere
