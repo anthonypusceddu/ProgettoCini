@@ -33,7 +33,7 @@ public class TopologiaMediana {
         p.terminaProduttore();*/
 
         // run local cluster
-        tpConf.setMaxTaskParallelism(1);
+        tpConf.setMaxTaskParallelism(Costant.NUM_PARALLELISM);
         LocalCluster cluster = new LocalCluster();
         cluster.submitTopology(Costant.TOPOLOGY_QUERY_2, tpConf, getTopology());//topologia query 2
     }

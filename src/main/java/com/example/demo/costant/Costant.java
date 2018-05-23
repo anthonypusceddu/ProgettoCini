@@ -34,4 +34,5 @@ public class Costant {
     public static final int MESSAGE_TIMEOUT_SEC=1900000;
     public static final int NUM_COMPARE_MEDIAN_BOLT=1;
     public static final String RESULT = "result";
+    public static final int NUM_PARALLELISM = 20;
 }
