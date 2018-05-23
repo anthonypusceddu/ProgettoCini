@@ -47,11 +47,9 @@ public class TopologiaMediana {
         tp.setBolt(Costant.FILTER_QUERY_2, new FilterMedianBolt(), Costant.NUM_FILTER).shuffleGrouping(Costant.SPOUT_QUERY_2);
         tp.setBolt(Costant.MEDIAN15M_BOLT, new Median15MBolt().withTumblingWindow(Duration.seconds(5)), Costant.NUM_MEDIAN_15M_BOLT)
                 .fieldsGrouping(Costant.FILTER_QUERY_2, new Fields(Costant.ID));
-        tp.setBolt(Costant.MEDIAN1H_BOLT, new Median1HBolt()
-                .withTumblingWindow(BaseWindowedBolt.Count.of(Costant.COUNT_MEDIAN_1H) ), Costant.NUM_MEDIAN_1H_BOLT)
+        tp.setBolt(Costant.MEDIAN1H_BOLT, new Median1HBolt(), Costant.NUM_MEDIAN_1H_BOLT)
                 .shuffleGrouping(Costant.MEDIAN15M_BOLT);
-        tp.setBolt(Costant.MEDIAN24H_BOLT, new Median1HBolt()
-                .withTumblingWindow(BaseWindowedBolt.Count.of(Costant.COUNT_MEDIAN_24H) ), Costant.NUM_MEDIAN_24H_BOLT)
+        tp.setBolt(Costant.MEDIAN24H_BOLT, new Median1HBolt(), Costant.NUM_MEDIAN_24H_BOLT)
                 .shuffleGrouping(Costant.MEDIAN1H_BOLT);
         tp.setBolt(Costant.GLOBAL_MEDIAN, new GlobalMedianBolt(), Costant.NUM_GLOBAL_BOLT)
                 .shuffleGrouping(Costant.MEDIAN15M_BOLT)
