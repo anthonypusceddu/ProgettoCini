@@ -46,7 +46,6 @@ public class GlobalMedianBolt extends BaseRichBolt {
     @Override
     public void execute(Tuple tuple) {
         List<Incrocio> intersections;
-        TDigest globalHTDIgest;
         intersections= (List<Incrocio>) tuple.getValueByField(Costant.LIST_INTERSECTION);
         globalList.addAll(intersections);
         countMedian++;
@@ -54,29 +53,20 @@ public class GlobalMedianBolt extends BaseRichBolt {
             globalTDIgest.add(intersections.get(i).getTd1());
         }
         if(countMedian >= PreviousReplication) {
-            ArrayList<Incrocio> listMax = new ArrayList<Incrocio>();
+            ArrayList<Incrocio> listMax = new ArrayList<>();
             double quantil = globalTDIgest.quantile(Costant.QUANTIL);
             for ( Incrocio i : globalList) {
                 if( i.getMedianaVeicoli() >= quantil ){
                     listMax.add(i);
                 }
             }
-            collector.emit(new Values(this.MedianType,listMax, quantil ));
+          //  collector.emit(new Values(this.MedianType,listMax, quantil ));
+            System.out.println(this.MedianType +"   " + quantil + "   "+listMax.size());
             countMedian = 0;
             globalList=null;
             globalList=new ArrayList<>();
             globalTDIgest =null;
             globalTDIgest = new AVLTreeDigest(Costant.COMPRESSION);
         }
-        //System.out.println("ho ricevuto tupla dal Median15MBolt");
-    }
-
-    private TDigest tDIgestWork(List<Incrocio> intersections){
-        TDigest TDIgest = new AVLTreeDigest(Costant.COMPRESSION);
-        for(int i=0;i!= intersections.size() ;i++){
-            TDIgest.add(intersections.get(i).getTd1());
-        }
-        return TDIgest;
-
     }
 }
