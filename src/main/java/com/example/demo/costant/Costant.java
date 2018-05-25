@@ -2,7 +2,7 @@ package com.example.demo.costant;
 
 public class Costant {
     public static final int TOP_K = 10;
-    public static final int N_INTERSECTIONS = 50;
+    public static int N_INTERSECTIONS = 50;
     public static final int SEM_INTERSEC = 4;
     public static final int WINDOW_MIN = 25;
     public static final int WINDOW_HOUR = 1;
@@ -25,7 +25,9 @@ public class Costant {
     public static final String MEDIAN1H_BOLT="Median1HBolt";
     public static final String MEDIAN24H_BOLT="Median24HBolt";
     public static final String ID="id";
-    public static final String GLOBAL_MEDIAN="globalMed";
+    public static final String GLOBAL15M_MEDIAN="global15MMed";
+    public static final String GLOBAL1H_MEDIAN="global1HMed";
+    public static final String GLOBAL24H_MEDIAN="global24HMed";
     public static final String COMPARE_BOLT="compareBolt";
     public static final String SENSOR="sensore";
     public static final String INTERSECTION="incrocio";

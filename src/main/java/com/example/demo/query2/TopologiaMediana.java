@@ -45,19 +45,18 @@ public class TopologiaMediana {
         final TopologyBuilder tp = new TopologyBuilder();
         tp.setSpout(Costant.SPOUT_QUERY_2, new SpoutSem(), Costant.NUM_SPOUT_QUERY_2);
         tp.setBolt(Costant.FILTER_QUERY_2, new FilterMedianBolt(), Costant.NUM_FILTER).shuffleGrouping(Costant.SPOUT_QUERY_2);
-        tp.setBolt(Costant.MEDIAN15M_BOLT, new Median15MBolt().withTumblingWindow(Duration.seconds(5)), Costant.NUM_MEDIAN_15M_BOLT)
+        tp.setBolt(Costant.MEDIAN15M_BOLT, new MedianBolt().withTumblingWindow(Duration.seconds(5)), Costant.NUM_MEDIAN_15M_BOLT)
                 .fieldsGrouping(Costant.FILTER_QUERY_2, new Fields(Costant.ID));
-        tp.setBolt(Costant.MEDIAN1H_BOLT, new Median1HBolt(), Costant.NUM_MEDIAN_1H_BOLT)
+        tp.setBolt(Costant.MEDIAN1H_BOLT, new MedianBolt().withTumblingWindow(Duration.seconds(10)), Costant.NUM_MEDIAN_1H_BOLT)
+                .fieldsGrouping(Costant.FILTER_QUERY_2, new Fields(Costant.ID));
+        tp.setBolt(Costant.MEDIAN24H_BOLT, new MedianBolt().withTumblingWindow(Duration.seconds(15)), Costant.NUM_MEDIAN_24H_BOLT)
+                .fieldsGrouping(Costant.FILTER_QUERY_2, new Fields(Costant.ID));
+        tp.setBolt(Costant.GLOBAL15M_MEDIAN, new GlobalMedianBolt(Costant.ID15M, Costant.NUM_MEDIAN_15M_BOLT), Costant.NUM_GLOBAL_BOLT)
                 .shuffleGrouping(Costant.MEDIAN15M_BOLT);
-        tp.setBolt(Costant.MEDIAN24H_BOLT, new Median1HBolt(), Costant.NUM_MEDIAN_24H_BOLT)
+        tp.setBolt(Costant.GLOBAL1H_MEDIAN, new GlobalMedianBolt(Costant.ID1H, Costant.NUM_MEDIAN_1H_BOLT), Costant.NUM_GLOBAL_BOLT)
                 .shuffleGrouping(Costant.MEDIAN1H_BOLT);
-        tp.setBolt(Costant.GLOBAL_MEDIAN, new GlobalMedianBolt(), Costant.NUM_GLOBAL_BOLT)
-                .shuffleGrouping(Costant.MEDIAN15M_BOLT)
-                .shuffleGrouping(Costant.MEDIAN1H_BOLT)
+        tp.setBolt(Costant.GLOBAL24H_MEDIAN, new GlobalMedianBolt(Costant.ID24H, Costant.NUM_MEDIAN_24H_BOLT), Costant.NUM_GLOBAL_BOLT)
                 .shuffleGrouping(Costant.MEDIAN24H_BOLT);
-
-        tp.setBolt(Costant.COMPARE_BOLT, new CompareMedianBolt(), Costant.NUM_COMPARE_MEDIAN_BOLT)
-                .shuffleGrouping(Costant.GLOBAL_MEDIAN);
         return tp.createTopology();
     }
 

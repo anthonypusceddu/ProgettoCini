@@ -12,19 +12,21 @@ import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
-import org.apache.storm.utils.Utils;
 
 import java.util.*;
 
 public class GlobalMedianBolt extends BaseRichBolt {
-    //GlobalMedianBolt riceve tutte liste di incroci e
-    // le mette insieme per creare un unica lista che contiene tutti gli incroci
-    //dalla lista contentente tutti gli incroci calcola la mediana globale
-    // e manda tutta la lista e la mediana global al calculatemax
+    private int PreviousReplication;
+    private String MedianType ;
     private OutputCollector collector;
-    private int countMedian15MBolt;
-    private List<Incrocio> global15MList;
-    private TDigest global15MTDIgest;
+    private int countMedian;
+    private List<Incrocio> globalList;
+    private TDigest globalTDIgest;
+
+    public GlobalMedianBolt(String s, int rep) {
+        this.MedianType = s;
+        this.PreviousReplication = rep;
+    }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
@@ -36,59 +38,38 @@ public class GlobalMedianBolt extends BaseRichBolt {
     @Override
     public void prepare(Map map, TopologyContext topologyContext, OutputCollector outputCollector) {
         this.collector = outputCollector;
-        countMedian15MBolt = 0;
-        global15MTDIgest= new AVLTreeDigest(Costant.COMPRESSION);
-        global15MList=new ArrayList<>();
+        countMedian = 0;
+        globalTDIgest = new AVLTreeDigest(Costant.COMPRESSION);
+        globalList=new ArrayList<>();
     }
 
     @Override
     public void execute(Tuple tuple) {
         List<Incrocio> intersections;
         TDigest globalHTDIgest;
-
-        tuple.getSourceComponent();
-
-        // 15 Minuti
-        if (   tuple.getSourceComponent().equals(Costant.MEDIAN15M_BOLT) ){
-            intersections= (List<Incrocio>) tuple.getValueByField(Costant.LIST_INTERSECTION);
-            countMedian15MBolt++;
-            global15MList.addAll(intersections);
-            for(int i=0;i!= intersections.size() ;i++){
-                global15MTDIgest.add(intersections.get(i).getTd1());
+        intersections= (List<Incrocio>) tuple.getValueByField(Costant.LIST_INTERSECTION);
+        globalList.addAll(intersections);
+        countMedian++;
+        for(int i=0;i!= intersections.size() ;i++){
+            globalTDIgest.add(intersections.get(i).getTd1());
+        }
+        if(countMedian >= PreviousReplication) {
+            ArrayList<Incrocio> listMax = new ArrayList<Incrocio>();
+            double quantil = globalTDIgest.quantile(Costant.QUANTIL);
+            for ( Incrocio i : globalList) {
+                if( i.getMedianaVeicoli() >= quantil ){
+                    listMax.add(i);
+                }
             }
-            if(countMedian15MBolt >= Costant.NUM_MEDIAN_15M_BOLT) {
-               // System.out.println("emit globalmed"+global15MList);
-               // System.out.println(global15MList.get(0));
-                collector.emit(new Values(Costant.ID15M,global15MList,global15MTDIgest.quantile(Costant.QUANTIL)));
-                countMedian15MBolt = 0;
-                global15MList=null;
-                global15MList=new ArrayList<>();
-                global15MTDIgest=null;
-                global15MTDIgest = new AVLTreeDigest(Costant.COMPRESSION);
-            }
-            //System.out.println("ho ricevuto tupla dal Median15MBolt");
+            collector.emit(new Values(this.MedianType,listMax, quantil ));
+            countMedian = 0;
+            globalList=null;
+            globalList=new ArrayList<>();
+            globalTDIgest =null;
+            globalTDIgest = new AVLTreeDigest(Costant.COMPRESSION);
         }
-
-        //1 ora
-        if ( tuple.getSourceComponent().equals(Costant.MEDIAN1H_BOLT) ){
-            intersections=  (List<Incrocio>) tuple.getValueByField(Costant.LIST_INTERSECTION);
-            globalHTDIgest= tDIgestWork(intersections);
-            collector.emit(new Values(Costant.ID1H,intersections,globalHTDIgest.quantile(Costant.QUANTIL)));
-            //System.out.println("ho ricevuto tupla dal Median1HBolt");
-        }
-
-        //24 ore
-        if (  tuple.getSourceComponent().equals(Costant.MEDIAN24H_BOLT) ){
-            intersections=  (List<Incrocio>) tuple.getValueByField(Costant.LIST_INTERSECTION);
-            globalHTDIgest= tDIgestWork(intersections);
-            collector.emit(new Values(Costant.ID24H,intersections,globalHTDIgest.quantile(Costant.QUANTIL)));
-            //System.out.println("ho ricevuto tupla dal Median24HBolt");
-        }
+        //System.out.println("ho ricevuto tupla dal Median15MBolt");
     }
-
-
-
-
 
     private TDigest tDIgestWork(List<Incrocio> intersections){
         TDigest TDIgest = new AVLTreeDigest(Costant.COMPRESSION);

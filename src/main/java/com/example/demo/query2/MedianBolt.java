@@ -2,9 +2,6 @@ package com.example.demo.query2;
 
 import com.example.demo.costant.Costant;
 import com.example.demo.query1.entity.Incrocio;
-import com.example.demo.query1.entity.Rank;
-import com.tdunning.math.stats.AVLTreeDigest;
-import com.tdunning.math.stats.TDigest;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
@@ -14,17 +11,15 @@ import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
 import org.apache.storm.windowing.TupleWindow;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class Median15MBolt extends BaseWindowedBolt {
-    //MedianBolt scansiona tutte le tuple incrocio con mediana nella finestra
-    // e crea hashmap con id incrocio,incrocio
-    //l'incrocio nella hashamp contiene la mediana dei dati relativi a quell'incrocio nel tempo
-    //quando i dati in finestra sono finiti invia lista di incroci
+public class MedianBolt extends BaseWindowedBolt {
 
     private OutputCollector collector;
     private HashMap<Integer, Incrocio> mappa;
-
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
@@ -40,7 +35,6 @@ public class Median15MBolt extends BaseWindowedBolt {
 
     @Override
     public void execute(TupleWindow inputWindow) {
-
         List<Tuple> tupleList = inputWindow.get();
         for ( Tuple t : tupleList){
             Incrocio l = (Incrocio) t.getValueByField(Costant.INTERSECTION);
@@ -52,10 +46,9 @@ public class Median15MBolt extends BaseWindowedBolt {
             }
         }
         List<Incrocio> listamediane = createList(mappa);
-
-        //System.out.println("stampo lista mediane" + listamediane+"size lista "+listamediane.size());
         collector.emit(new Values(listamediane));
-        //System.out.println("ho inviato dal Median15MBolt ");
+
+
     }
 
     private List<Incrocio> createList(HashMap<Integer,Incrocio> mappa){
@@ -73,5 +66,3 @@ public class Median15MBolt extends BaseWindowedBolt {
         return oldi;
     }
 }
-
-
