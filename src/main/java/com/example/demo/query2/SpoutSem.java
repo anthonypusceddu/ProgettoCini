@@ -41,7 +41,7 @@ public class SpoutSem extends BaseRichSpout {
             }
         }
         System.out.println("fine generazione");
-        Utils.sleep(5000);
+        Utils.sleep(500);
     }
 
     @Override

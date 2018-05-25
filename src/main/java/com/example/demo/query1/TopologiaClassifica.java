@@ -59,10 +59,10 @@ public class TopologiaClassifica {
         /*tp.setBolt(Costant.AVG15M_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(1)),Costant.NUM_AVG15M)
                 .fieldsGrouping(Costant.FILTER_QUERY_1, new Fields(Costant.ID));
 */
-        tp.setBolt(Costant.AVG1H_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(5)),Costant.NUM_AVG1H)
-                .fieldsGrouping(Costant.FILTER_QUERY_1, new Fields(Costant.ID));*/
+        tp.setBolt(Costant.AVG1H_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(1)),Costant.NUM_AVG1H)
+                .fieldsGrouping(Costant.FILTER_QUERY_1, new Fields(Costant.ID));
 
-        tp.setBolt(Costant.AVG24H_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(10)),Costant.NUM_AVG24H)
+        tp.setBolt(Costant.AVG24H_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(3)),Costant.NUM_AVG24H)
                 .fieldsGrouping(Costant.FILTER_QUERY_1, new Fields(Costant.ID));
 
         /* tp.setBolt(Costant.INTERMEDIATERANK_15M, new IntermediateRank(), Costant.NUM_INTERMEDIATERANK15M)
