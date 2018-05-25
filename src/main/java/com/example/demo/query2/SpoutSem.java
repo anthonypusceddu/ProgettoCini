@@ -30,17 +30,18 @@ public class SpoutSem extends BaseRichSpout {
     @Override
     public void nextTuple() {
         //metodo per inviare tuple ai bolt
-        float max = 100F;
-        float min = 0F;
+        double max = 100;
+        double min = 0;
         SensoreSemaforo s;
-        for (int i = 0; i < Costant.N_INTERSECTIONS*1440; i++) {
+        for (int i = 0; i < Costant.N_INTERSECTIONS; i++) {
             for ( int j = 0 ; j < Costant.SEM_INTERSEC ; j++){
-                s=new SensoreSemaforo(i,j,min + rand.nextFloat() * (max - min), ThreadLocalRandom.current().nextInt(0, 100 + 1)) ;
+                s=new SensoreSemaforo(i,j,min + rand.nextDouble() * (max - min), ThreadLocalRandom.current().nextInt(0, 100 + 1)) ;
+                //System.out.println(s);
                 collector.emit(new Values(s));
             }
         }
         System.out.println("fine generazione");
-        Utils.sleep(1000);
+        Utils.sleep(5000);
     }
 
     @Override

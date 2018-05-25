@@ -5,22 +5,16 @@ import com.example.demo.query1.bolt.FilterBolt;
 import com.example.demo.query1.bolt.GlobalRank;
 import com.example.demo.query1.bolt.IntermediateRank;
 import com.example.demo.costant.Costant;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
+import com.example.demo.query2.SpoutSem;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.generated.StormTopology;
-import org.apache.storm.kafka.spout.KafkaSpout;
-import org.apache.storm.kafka.spout.KafkaSpoutConfig;
-import org.apache.storm.kafka.spout.KafkaSpoutRetryExponentialBackoff;
-import org.apache.storm.kafka.spout.KafkaSpoutRetryService;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.topology.base.BaseWindowedBolt.Duration;
 import org.apache.storm.tuple.Fields;
 
 
 import java.util.Properties;
-
-import static org.apache.storm.kafka.spout.KafkaSpoutConfig.FirstPollOffsetStrategy.EARLIEST;
 
 public class TopologiaClassifica {
 
@@ -34,9 +28,6 @@ public class TopologiaClassifica {
     }
 
     protected void runMain(String[] args) throws Exception {
-        final String brokerUrl = args.length > 0 ? args[0] : KAFKA_LOCAL_BROKER;
-        System.out.println("Running with broker url: " + brokerUrl);
-
         Config tpConf = getConfig();
 
 
@@ -46,18 +37,55 @@ public class TopologiaClassifica {
         p.terminaProduttore();*/
 
         // run local cluster
-        tpConf.setMaxTaskParallelism(1);
+        tpConf.setMaxTaskParallelism(Costant.NUM_PARALLELISM);
         LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology("topologiaClassifica", tpConf, getTopologyKafkaSpout(getKafkaSpoutConfig(brokerUrl)));
+        cluster.submitTopology(Costant.TOPOLOGY_QUERY_1, tpConf, getTopology());
     }
 
     protected Config getConfig() {
         Config config = new Config();
-        config.setDebug(true);
+        config.setDebug(false);
+        config.setMessageTimeoutSecs(Costant.MESSAGE_TIMEOUT_SEC);
         return config;
     }
 
-    protected StormTopology getTopologyKafkaSpout(KafkaSpoutConfig<String, String> spoutConfig) {
+    protected StormTopology getTopology() {
+        final TopologyBuilder tp = new TopologyBuilder();
+
+        tp.setSpout(Costant.SPOUT, new SpoutSem(), Costant.NUM_SPOUT_QUERY_1);
+
+        tp.setBolt(Costant.FILTER_QUERY_1,new FilterBolt(),Costant.NUM_FILTER_QUERY1).shuffleGrouping(Costant.SPOUT);
+
+        /*tp.setBolt(Costant.AVG15M_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(1)),Costant.NUM_AVG15M)
+                .fieldsGrouping(Costant.FILTER_QUERY_1, new Fields(Costant.ID));
+*/
+        tp.setBolt(Costant.AVG1H_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(5)),Costant.NUM_AVG1H)
+                .fieldsGrouping(Costant.FILTER_QUERY_1, new Fields(Costant.ID));*/
+
+        tp.setBolt(Costant.AVG24H_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(10)),Costant.NUM_AVG24H)
+                .fieldsGrouping(Costant.FILTER_QUERY_1, new Fields(Costant.ID));
+
+        /* tp.setBolt(Costant.INTERMEDIATERANK_15M, new IntermediateRank(), Costant.NUM_INTERMEDIATERANK15M)
+                .shuffleGrouping(Costant.AVG15M_BOLT);
+*/
+        tp.setBolt(Costant.INTERMEDIATERANK_1H, new IntermediateRank(), Costant.NUM_INTERMEDIATERANK1H)
+                .shuffleGrouping(Costant.AVG1H_BOLT);
+
+        tp.setBolt(Costant.INTERMEDIATERANK_24H, new IntermediateRank(), Costant.NUM_INTERMEDIATERANK24H)
+                .shuffleGrouping(Costant.AVG24H_BOLT);
+
+        /*tp.setBolt(Costant.GLOBAL15M_AVG, new GlobalRank(Costant.ID15M,Costant.NUM_AVG15M),Costant.NUM_GLOBAL_BOLT)
+                .shuffleGrouping(Costant.INTERMEDIATERANK_15M);
+*/
+        tp.setBolt(Costant.GLOBAL1H_AVG, new GlobalRank(Costant.ID1H,Costant.NUM_AVG1H),Costant.NUM_GLOBAL_BOLT)
+                .shuffleGrouping(Costant.INTERMEDIATERANK_1H);
+
+        tp.setBolt(Costant.GLOBAL24H_AVG, new GlobalRank(Costant.ID24H,Costant.NUM_AVG24H),Costant.NUM_GLOBAL_BOLT)
+                .shuffleGrouping(Costant.INTERMEDIATERANK_24H);
+        return tp.createTopology();
+    }
+
+    /*protected StormTopology getTopologyKafkaSpout(KafkaSpoutConfig<String, String> spoutConfig) {
         final TopologyBuilder tp = new TopologyBuilder();
         tp.setSpout("kafka_spout", new KafkaSpout<>(spoutConfig), Costant.NUM_SPOUT_QUERY_1);
         tp.setBolt("filterBolt",new FilterBolt(),Costant.NUM_FILTER).shuffleGrouping("kafka_spout");
@@ -89,6 +117,6 @@ public class TopologiaClassifica {
     protected KafkaSpoutRetryService getRetryService() {
         return new KafkaSpoutRetryExponentialBackoff(KafkaSpoutRetryExponentialBackoff.TimeInterval.microSeconds(500),
                 KafkaSpoutRetryExponentialBackoff.TimeInterval.milliSeconds(2), Integer.MAX_VALUE, KafkaSpoutRetryExponentialBackoff.TimeInterval.seconds(10));
-    }
+    }*/
 
 }

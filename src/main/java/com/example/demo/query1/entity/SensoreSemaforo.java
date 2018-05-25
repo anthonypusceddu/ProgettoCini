@@ -5,13 +5,13 @@ public class SensoreSemaforo {
 
     private int incrocio;
     private int semaforo;
-    private float velocità;
+    private double velocita;
     private int numeroVeicoli;
 
-    public SensoreSemaforo(int i, int s,float vel, int nv){
+    public SensoreSemaforo(int i, int s,double vel, int nv){
         this.incrocio = i;
         this.semaforo = s;
-        this.velocità = vel;
+        this.velocita = vel;
         this.numeroVeicoli = nv;
     }
 
@@ -35,12 +35,12 @@ public class SensoreSemaforo {
         this.semaforo = semaforo;
     }
 
-    public float getVelocità() {
-        return velocità;
+    public double getVelocita() {
+        return velocita;
     }
 
-    public void setVelocità(float velocità) {
-        this.velocità = velocità;
+    public void setVelocita(double velocita) {
+        this.velocita = velocita;
     }
 
     public int getNumeroVeicoli() {
@@ -50,4 +50,11 @@ public class SensoreSemaforo {
     public void setNumeroVeicoli(int numeroVeicoli) {
         this.numeroVeicoli = numeroVeicoli;
     }
+
+
+    @Override
+    public String toString(){
+        return "velocità "+this.velocita+" num="+this.numeroVeicoli;
+    }
+
 }

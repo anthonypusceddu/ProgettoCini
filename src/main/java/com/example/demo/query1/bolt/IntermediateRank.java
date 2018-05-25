@@ -3,7 +3,6 @@ package com.example.demo.query1.bolt;
 import com.example.demo.query1.ComparatoreIncrocio;
 import com.example.demo.query1.entity.Incrocio;
 import com.example.demo.costant.Costant;
-import com.example.demo.query1.entity.Rank;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.*;
@@ -20,9 +19,10 @@ public class IntermediateRank extends BaseRichBolt {
 
     private OutputCollector collector;
 
+
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("classificaparziale"));
+        declarer.declare(new Fields(Costant.PARTIAL_RANK));
     }
 
     @Override
@@ -33,12 +33,10 @@ public class IntermediateRank extends BaseRichBolt {
     @Override
     public void execute(Tuple input) {//riceve lista di incroci
         //ordina lista di incroci creando una classifica e invia classifica
-        Rank rank= (Rank)input.getValueByField("listaincroci");
-        List<Incrocio> list=rank.getListIntersection();
+        List<Incrocio> list= (List<Incrocio>) input.getValueByField(Costant.LIST_INTERSECTION);
         Collections.sort(list,new ComparatoreIncrocio());
         if(list.size() > Costant.TOP_K)
             list= list.subList(0, Costant.TOP_K-1);
-        rank.setListIntersection(list);
-        collector.emit(new Values(rank));
+        collector.emit(new Values(list));
     }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 public class Incrocio {
     private List<SensoreSemaforo> l;
     private int id;
-    private float VelocitàMedia;
+    private double VelocitaMedia;
     private double medianaVeicoli;
     private int numeroVeicoli;
     private TDigest td1 ;
@@ -37,12 +37,12 @@ public class Incrocio {
         this.id = id;
     }
 
-    public float getVelocitàMedia() {
-        return VelocitàMedia;
+    public double getVelocitaMedia() {
+        return VelocitaMedia;
     }
 
-    public void setVelocitàMedia(float velocitàMedia) {
-        VelocitàMedia = velocitàMedia;
+    public void setVelocitaMedia(double velocitaMedia) {
+        VelocitaMedia = velocitaMedia;
     }
 
     public int getNumeroVeicoli() {
@@ -67,5 +67,10 @@ public class Incrocio {
 
     public void setTd1(TDigest td1) {
         this.td1 = td1;
+    }
+
+    @Override
+    public String toString(){
+        return "id="+this.id+" velMedia="+this.VelocitaMedia;
     }
 }
