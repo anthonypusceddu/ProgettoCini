@@ -1,8 +1,8 @@
-package com.example.demo.query2;
+package com.example.demo.query2.bolt;
 
 
 import com.example.demo.costant.Costant;
-import com.example.demo.query1.entity.Incrocio;
+import com.example.demo.entity.Intersection;
 import com.tdunning.math.stats.AVLTreeDigest;
 import com.tdunning.math.stats.TDigest;
 import org.apache.storm.task.OutputCollector;
@@ -11,7 +11,6 @@ import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
-import org.apache.storm.tuple.Values;
 
 import java.util.*;
 
@@ -20,7 +19,7 @@ public class GlobalMedianBolt extends BaseRichBolt {
     private String MedianType ;
     private OutputCollector collector;
     private int countMedian;
-    private List<Incrocio> globalList;
+    private List<Intersection> globalList;
     private TDigest globalTDIgest;
 
     public GlobalMedianBolt(String s, int rep) {
@@ -45,17 +44,17 @@ public class GlobalMedianBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple tuple) {
-        List<Incrocio> intersections;
-        intersections= (List<Incrocio>) tuple.getValueByField(Costant.LIST_INTERSECTION);
+        List<Intersection> intersections;
+        intersections= (List<Intersection>) tuple.getValueByField(Costant.LIST_INTERSECTION);
         globalList.addAll(intersections);
         countMedian++;
         for(int i=0;i!= intersections.size() ;i++){
             globalTDIgest.add(intersections.get(i).getTd1());
         }
         if(countMedian >= PreviousReplication) {
-            ArrayList<Incrocio> listMax = new ArrayList<>();
+            ArrayList<Intersection> listMax = new ArrayList<>();
             double quantil = globalTDIgest.quantile(Costant.QUANTIL);
-            for ( Incrocio i : globalList) {
+            for ( Intersection i : globalList) {
                 if( i.getMedianaVeicoli() >= quantil ){
                     listMax.add(i);
                 }

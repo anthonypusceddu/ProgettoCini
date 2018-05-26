@@ -1,11 +1,8 @@
-package com.example.demo.query2;
+package com.example.demo.query2.bolt;
 
 import com.example.demo.costant.Costant;
-import com.example.demo.query1.entity.Incrocio;
-import com.example.demo.query1.entity.SensoreSemaforo;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.demo.entity.Intersection;
+import com.example.demo.entity.Sensor;
 import com.tdunning.math.stats.AVLTreeDigest;
 import com.tdunning.math.stats.TDigest;
 import org.apache.storm.task.OutputCollector;
@@ -15,7 +12,6 @@ import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
-import org.apache.storm.utils.Utils;
 
 
 import java.util.ArrayList;
@@ -27,10 +23,10 @@ public class FilterMedianBolt extends BaseRichBolt {
     //bolt filtro riceve tupla di un sensore e invia una tupla incrocio quando ha ricevuto i 4 semafori
     //dello stesso incrocio
     private OutputCollector collector;
-    //private SensoreSemaforo s;
+    //private Sensor s;
     //private ObjectMapper mapper = new ObjectMapper();
-    private HashMap<Integer, Incrocio> mappa;
-    private Incrocio inc;
+    private HashMap<Integer, Intersection> mappa;
+    private Intersection inc;
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
@@ -46,17 +42,17 @@ public class FilterMedianBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple input) {
-        List<SensoreSemaforo> lista = null;
+        List<Sensor> lista = null;
         //controllare integrità tupla e/o semaforo rotto
         //JsonNode jsonNode = (JsonNode) input.getValueByField("sensore");
-        SensoreSemaforo s=(SensoreSemaforo) input.getValueByField(Costant.SENSOR);
+        Sensor s=(Sensor) input.getValueByField(Costant.SENSOR);
 
-        if ( mappa.containsKey(s.getIncrocio()) ){
-            Incrocio c;
-            c = mappa.get(s.getIncrocio());
+        if ( mappa.containsKey(s.getIntersection()) ){
+            Intersection c;
+            c = mappa.get(s.getIntersection());
             c.getL().add(s);
             if ( c.getL().size() == Costant.SEM_INTERSEC ){
-                mappa.remove(s.getIncrocio());
+                mappa.remove(s.getIntersection());
                 mediana(c);
                 collector.emit(new Values(c.getId(),c ) );
                 //System.out.println("FilterMedianBoltHaEMesso");
@@ -64,22 +60,22 @@ public class FilterMedianBolt extends BaseRichBolt {
             else{
                 //sarebbe più sicuro fare remove e riaggiungere
                 mappa.remove(c.getId());
-                mappa.put(s.getIncrocio(),c);
+                mappa.put(s.getIntersection(),c);
             }
         }
         else {
             lista = new ArrayList<>();
             lista.add(s);
-            inc = new Incrocio(lista, s.getIncrocio());
-            mappa.put(s.getIncrocio(), inc );
+            inc = new Intersection(lista, s.getIntersection());
+            mappa.put(s.getIntersection(), inc );
         }
     }
 
-    private void mediana(Incrocio c){
+    private void mediana(Intersection c){
         //calcola mediana dell'incrocio
         TDigest td1 = new AVLTreeDigest(Costant.COMPRESSION);
         for(int i=0;i!=Costant.SEM_INTERSEC;i++){//cambiare il 4 con Constant. ecc
-            td1.add(c.getL().get(i).getNumeroVeicoli());
+            td1.add(c.getL().get(i).getNumVehicles());
         }
         c.setMedianaVeicoli(td1.quantile(Costant.QUANTIL));
         c.setTd1(td1);

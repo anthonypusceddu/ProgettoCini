@@ -1,5 +1,9 @@
 package com.example.demo.query2;
 
+import com.example.demo.query2.bolt.FilterMedianBolt;
+import com.example.demo.query2.bolt.GlobalMedianBolt;
+import com.example.demo.query2.bolt.MedianBolt;
+import com.example.demo.spout.SpoutTraffic;
 import com.example.demo.costant.Costant;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -8,11 +12,11 @@ import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.topology.base.BaseWindowedBolt.Duration;
 import org.apache.storm.tuple.Fields;
 
-public class TopologiaMediana {
+public class Topology2 {
 
 
     public static void main(String[] args) throws Exception {
-        new TopologiaMediana().runMain(args);
+        new Topology2().runMain(args);
         ///
     }
 
@@ -39,7 +43,7 @@ public class TopologiaMediana {
     protected StormTopology getTopology() {
         //creazione topologia query 2
         final TopologyBuilder tp = new TopologyBuilder();
-        tp.setSpout(Costant.SPOUT, new SpoutSem(), Costant.NUM_SPOUT_QUERY_2);
+        tp.setSpout(Costant.SPOUT, new SpoutTraffic(), Costant.NUM_SPOUT_QUERY_2);
 
         tp.setBolt(Costant.FILTER_QUERY_2, new FilterMedianBolt(), Costant.NUM_FILTER_QUERY2).shuffleGrouping(Costant.SPOUT);
 

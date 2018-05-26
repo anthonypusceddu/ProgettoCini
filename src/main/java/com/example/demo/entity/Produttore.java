@@ -1,4 +1,4 @@
-package com.example.demo.query1.entity;
+package com.example.demo.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +41,7 @@ public class Produttore {
 
         for (int i = 0; i < 10; i++) {
             for ( int j = 0 ; j < 4 ; j++){
-                JsonNode json = objectMapper.valueToTree(new SensoreSemaforo(i,j,min + r.nextFloat() * (max - min), ThreadLocalRandom.current().nextInt(0, 100 + 1) ) ) ;
+                JsonNode json = objectMapper.valueToTree(new Sensor(i,j,min + r.nextFloat() * (max - min), ThreadLocalRandom.current().nextInt(0, 100 + 1) ) ) ;
                 producer.send(new ProducerRecord<String, JsonNode>("classifica", json)  );
             }
 

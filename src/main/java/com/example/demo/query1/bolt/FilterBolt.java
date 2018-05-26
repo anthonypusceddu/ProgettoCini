@@ -1,8 +1,8 @@
 package com.example.demo.query1.bolt;
 
 import com.example.demo.costant.Costant;
-import com.example.demo.query1.entity.Incrocio;
-import com.example.demo.query1.entity.SensoreSemaforo;
+import com.example.demo.entity.Intersection;
+import com.example.demo.entity.Sensor;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
@@ -20,8 +20,8 @@ import java.util.Map;
 public class FilterBolt extends BaseRichBolt {
 //il filter bolt riceve semafori e invia incroci quando essi sono completi
     private OutputCollector collector;
-    private HashMap<Integer, Incrocio> mappa;
-    private Incrocio inc;
+    private HashMap<Integer, Intersection> mappa;
+    private Intersection inc;
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
@@ -37,38 +37,38 @@ public class FilterBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple input) {
-        List<SensoreSemaforo> list;
+        List<Sensor> list;
         //controllare integrità tupla e/o semaforo rotto
-        SensoreSemaforo s=(SensoreSemaforo) input.getValueByField(Costant.SENSOR);
-        if ( mappa.containsKey(s.getIncrocio()) ){//incrocio esiste in hasmap
-            Incrocio c;
-            c = mappa.get(s.getIncrocio());//prendi incrocio dall'hashmap
+        Sensor s=(Sensor) input.getValueByField(Costant.SENSOR);
+        if ( mappa.containsKey(s.getIntersection()) ){//incrocio esiste in hasmap
+            Intersection c;
+            c = mappa.get(s.getIntersection());//prendi incrocio dall'hashmap
             c.getL().add(s);//aggiungi il semaforo all'incrocio
             if ( c.getL().size() == Costant.SEM_INTERSEC ){//se l'incrocio è completo
-                mappa.remove(s.getIncrocio());//rimuovi l'incrocio dall'hashmap
+                mappa.remove(s.getIntersection());//rimuovi l'incrocio dall'hashmap
                 media(c);//calcola la media
                 inc=c;
-                collector.emit(new Values( s.getIncrocio(), inc ) );//emetti l'incrocio
+                collector.emit(new Values( s.getIntersection(), inc ) );//emetti l'incrocio
             }
             else{//?
-                mappa.put(s.getIncrocio(), inc);
+                mappa.put(s.getIntersection(), inc);
             }
         }
         else {//l'incrocio non esiste in hashmap
             list = new ArrayList<>();
             list.add(s);
-            inc = new Incrocio(list, s.getIncrocio());//crea incrocio con il semaforo ricevuto
-            mappa.put(s.getIncrocio(), inc );//metti in hashmap l'incrocio
+            inc = new Intersection(list, s.getIntersection());//crea incrocio con il semaforo ricevuto
+            mappa.put(s.getIntersection(), inc );//metti in hashmap l'incrocio
         }
 
     }
 
-    private void media(Incrocio c) {
+    private void media(Intersection c) {
         double somma = 0;
         int numeroTotaleVeicoli = 0;
         for ( int i = 0 ; i<Costant.SEM_INTERSEC ; i++){
-            somma += c.getL().get(i).getVelocita()*c.getL().get(i).getNumeroVeicoli();
-            numeroTotaleVeicoli += c.getL().get(i).getNumeroVeicoli();
+            somma += c.getL().get(i).getSpeed()*c.getL().get(i).getNumVehicles();
+            numeroTotaleVeicoli += c.getL().get(i).getNumVehicles();
         }
         c.setNumeroVeicoli(numeroTotaleVeicoli);
         c.setVelocitaMedia(somma/numeroTotaleVeicoli);

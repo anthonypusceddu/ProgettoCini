@@ -1,9 +1,7 @@
-package com.example.demo.query2;
+package com.example.demo.spout;
 
 import com.example.demo.costant.Costant;
-import com.example.demo.query1.entity.SensoreSemaforo;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import com.example.demo.entity.Sensor;
 import org.apache.storm.spout.SpoutOutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
@@ -16,7 +14,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class SpoutSem extends BaseRichSpout {
+public class SpoutTraffic extends BaseRichSpout {
     //invia le tuple del sensore del semaforo provenienti dagli incroci
     private SpoutOutputCollector collector;
     private Random rand;
@@ -32,16 +30,16 @@ public class SpoutSem extends BaseRichSpout {
         //metodo per inviare tuple ai bolt
         double max = 100;
         double min = 0;
-        SensoreSemaforo s;
+        Sensor s;
         for (int i = 0; i < Costant.N_INTERSECTIONS; i++) {
             for ( int j = 0 ; j < Costant.SEM_INTERSEC ; j++){
-                s=new SensoreSemaforo(i,j,min + rand.nextDouble() * (max - min), ThreadLocalRandom.current().nextInt(0, 100 + 1)) ;
+                s=new Sensor(i,j,min + rand.nextDouble() * (max - min), ThreadLocalRandom.current().nextInt(0, 100 + 1)) ;
                 //System.out.println(s);
                 collector.emit(new Values(s));
             }
         }
         System.out.println("fine generazione");
-        Utils.sleep(500);
+        Utils.sleep(1000);
     }
 
     @Override

@@ -1,7 +1,7 @@
-package com.example.demo.query2;
+package com.example.demo.query2.bolt;
 
 import com.example.demo.costant.Costant;
-import com.example.demo.query1.entity.Incrocio;
+import com.example.demo.entity.Intersection;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class MedianBolt extends BaseWindowedBolt {
 
     private OutputCollector collector;
-    private HashMap<Integer, Incrocio> mappa;
+    private HashMap<Integer, Intersection> mappa;
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
@@ -37,7 +37,7 @@ public class MedianBolt extends BaseWindowedBolt {
     public void execute(TupleWindow inputWindow) {
         List<Tuple> tupleList = inputWindow.get();
         for ( Tuple t : tupleList){
-            Incrocio l = (Incrocio) t.getValueByField(Costant.INTERSECTION);
+            Intersection l = (Intersection) t.getValueByField(Costant.INTERSECTION);
             if(mappa.containsKey(l.getId())){
                 mappa.put(l.getId(), processMed(mappa.get(l.getId()),l));
             }
@@ -45,15 +45,15 @@ public class MedianBolt extends BaseWindowedBolt {
                 mappa.put(l.getId(),l);
             }
         }
-        List<Incrocio> listamediane = createList(mappa);
+        List<Intersection> listamediane = createList(mappa);
         collector.emit(new Values(listamediane));
 
 
     }
 
-    private List<Incrocio> createList(HashMap<Integer,Incrocio> mappa){
-        List<Incrocio> med = new ArrayList<>();
-        for (Incrocio i : mappa.values()) {
+    private List<Intersection> createList(HashMap<Integer,Intersection> mappa){
+        List<Intersection> med = new ArrayList<>();
+        for (Intersection i : mappa.values()) {
             i.setMedianaVeicoli(i.getTd1().quantile(Costant.QUANTIL));
             med.add(i);
             mappa.remove(i);
@@ -61,7 +61,7 @@ public class MedianBolt extends BaseWindowedBolt {
         return med;
     }
 
-    private Incrocio processMed(Incrocio oldi,Incrocio newi){
+    private Intersection processMed(Intersection oldi, Intersection newi){
         oldi.getTd1().add(newi.getTd1());
         return oldi;
     }

@@ -1,7 +1,6 @@
 package com.example.demo.query1.bolt;
 
-import com.example.demo.query1.ComparatoreIncrocio;
-import com.example.demo.query1.entity.Incrocio;
+import com.example.demo.entity.Intersection;
 import com.example.demo.costant.Costant;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
@@ -15,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class IntermediateRank extends BaseRichBolt {
+public class IntermediateRankBolt extends BaseRichBolt {
 
     private OutputCollector collector;
 
@@ -33,8 +32,8 @@ public class IntermediateRank extends BaseRichBolt {
     @Override
     public void execute(Tuple input) {//riceve lista di incroci
         //ordina lista di incroci creando una classifica e invia classifica
-        List<Incrocio> list= (List<Incrocio>) input.getValueByField(Costant.LIST_INTERSECTION);
-        Collections.sort(list,new ComparatoreIncrocio());
+        List<Intersection> list= (List<Intersection>) input.getValueByField(Costant.LIST_INTERSECTION);
+        Collections.sort(list,new Intersection());
         if(list.size() > Costant.TOP_K)
             list= list.subList(0, Costant.TOP_K-1);
         collector.emit(new Values(list));

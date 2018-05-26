@@ -1,7 +1,7 @@
 package com.example.demo.query1.bolt;
 
-import com.example.demo.query1.ComparatoreIncrocio;
-import com.example.demo.query1.entity.Incrocio;
+
+import com.example.demo.entity.Intersection;
 import com.example.demo.costant.Costant;
 import org.apache.storm.shade.org.apache.commons.collections.ListUtils;
 import org.apache.storm.task.OutputCollector;
@@ -14,15 +14,15 @@ import org.apache.storm.tuple.Values;
 
 import java.util.*;
 
-public class GlobalRank extends BaseRichBolt {
+public class GlobalRankBolt extends BaseRichBolt {
     private OutputCollector collector;
     private int countIntermediateRank;
-    private List<Incrocio> globalRanking;
+    private List<Intersection> globalRanking;
     private String AvgType;
     private int repNum;
 
 
-    public GlobalRank(String avgBolt, int rep) {
+    public GlobalRankBolt(String avgBolt, int rep) {
         this.AvgType = avgBolt;
         this.repNum = rep;
     }
@@ -42,7 +42,7 @@ public class GlobalRank extends BaseRichBolt {
     @Override
     public void execute(Tuple tuple) {
 
-        List<Incrocio> list = ( List<Incrocio> ) tuple.getValueByField(Costant.PARTIAL_RANK);
+        List<Intersection> list = ( List<Intersection> ) tuple.getValueByField(Costant.PARTIAL_RANK);
         countIntermediateRank++;
         if(globalRanking.isEmpty()) {
             globalRanking = list;
@@ -59,7 +59,7 @@ public class GlobalRank extends BaseRichBolt {
 
     }
 
-    private void sortOrderedRank( List<Incrocio> list) {
+    private void sortOrderedRank( List<Intersection> list) {
         if(globalRanking.size() < Costant.TOP_K) {
             //sorting e sublist10
             globalRanking=unionAndSort(globalRanking,list);
@@ -68,9 +68,9 @@ public class GlobalRank extends BaseRichBolt {
         }
     }
 
-    private List<Incrocio> unionAndSort(List<Incrocio> list1, List<Incrocio> list2){
-        List<Incrocio> l = ListUtils.union(list1,list2);
-        Collections.sort(l,new ComparatoreIncrocio());
+    private List<Intersection> unionAndSort(List<Intersection> list1, List<Intersection> list2){
+        List<Intersection> l = ListUtils.union(list1,list2);
+        Collections.sort(l,new Intersection());
         if(l.size()> Costant.TOP_K)
             l = l.subList(0,Costant.TOP_K);
         return l;

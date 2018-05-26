@@ -2,10 +2,10 @@ package com.example.demo.query1;
 
 import com.example.demo.query1.bolt.AvgBolt;
 import com.example.demo.query1.bolt.FilterBolt;
-import com.example.demo.query1.bolt.GlobalRank;
-import com.example.demo.query1.bolt.IntermediateRank;
+import com.example.demo.query1.bolt.GlobalRankBolt;
+import com.example.demo.query1.bolt.IntermediateRankBolt;
 import com.example.demo.costant.Costant;
-import com.example.demo.query2.SpoutSem;
+import com.example.demo.spout.SpoutTraffic;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.generated.StormTopology;
@@ -16,14 +16,14 @@ import org.apache.storm.tuple.Fields;
 
 import java.util.Properties;
 
-public class TopologiaClassifica {
+public class Topology1 {
 
     private static final String KAFKA_LOCAL_BROKER = "localhost:9092";
     public static final String TOPIC_0 = "classifica";
     private Properties properties;
 
     public static void main(String[] args) throws Exception {
-        new TopologiaClassifica().runMain(args);
+        new Topology1().runMain(args);
         ///
     }
 
@@ -52,35 +52,35 @@ public class TopologiaClassifica {
     protected StormTopology getTopology() {
         final TopologyBuilder tp = new TopologyBuilder();
 
-        tp.setSpout(Costant.SPOUT, new SpoutSem(), Costant.NUM_SPOUT_QUERY_1);
+        tp.setSpout(Costant.SPOUT, new SpoutTraffic(), Costant.NUM_SPOUT_QUERY_1);
 
         tp.setBolt(Costant.FILTER_QUERY_1,new FilterBolt(),Costant.NUM_FILTER_QUERY1).shuffleGrouping(Costant.SPOUT);
 
-        /*tp.setBolt(Costant.AVG15M_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(1)),Costant.NUM_AVG15M)
-                .fieldsGrouping(Costant.FILTER_QUERY_1, new Fields(Costant.ID));
-*/
-        tp.setBolt(Costant.AVG1H_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(1)),Costant.NUM_AVG1H)
+        tp.setBolt(Costant.AVG15M_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(5)),Costant.NUM_AVG15M)
                 .fieldsGrouping(Costant.FILTER_QUERY_1, new Fields(Costant.ID));
 
-        tp.setBolt(Costant.AVG24H_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(3)),Costant.NUM_AVG24H)
+        tp.setBolt(Costant.AVG1H_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(10)),Costant.NUM_AVG1H)
                 .fieldsGrouping(Costant.FILTER_QUERY_1, new Fields(Costant.ID));
 
-        /* tp.setBolt(Costant.INTERMEDIATERANK_15M, new IntermediateRank(), Costant.NUM_INTERMEDIATERANK15M)
+        tp.setBolt(Costant.AVG24H_BOLT, new AvgBolt().withTumblingWindow(Duration.seconds(15)),Costant.NUM_AVG24H)
+                .fieldsGrouping(Costant.FILTER_QUERY_1, new Fields(Costant.ID));
+
+        tp.setBolt(Costant.INTERMEDIATERANK_15M, new IntermediateRankBolt(), Costant.NUM_INTERMEDIATERANK15M)
                 .shuffleGrouping(Costant.AVG15M_BOLT);
-*/
-        tp.setBolt(Costant.INTERMEDIATERANK_1H, new IntermediateRank(), Costant.NUM_INTERMEDIATERANK1H)
+
+        tp.setBolt(Costant.INTERMEDIATERANK_1H, new IntermediateRankBolt(), Costant.NUM_INTERMEDIATERANK1H)
                 .shuffleGrouping(Costant.AVG1H_BOLT);
 
-        tp.setBolt(Costant.INTERMEDIATERANK_24H, new IntermediateRank(), Costant.NUM_INTERMEDIATERANK24H)
+        tp.setBolt(Costant.INTERMEDIATERANK_24H, new IntermediateRankBolt(), Costant.NUM_INTERMEDIATERANK24H)
                 .shuffleGrouping(Costant.AVG24H_BOLT);
 
-        /*tp.setBolt(Costant.GLOBAL15M_AVG, new GlobalRank(Costant.ID15M,Costant.NUM_AVG15M),Costant.NUM_GLOBAL_BOLT)
+        tp.setBolt(Costant.GLOBAL15M_AVG, new GlobalRankBolt(Costant.ID15M,Costant.NUM_AVG15M),Costant.NUM_GLOBAL_BOLT)
                 .shuffleGrouping(Costant.INTERMEDIATERANK_15M);
-*/
-        tp.setBolt(Costant.GLOBAL1H_AVG, new GlobalRank(Costant.ID1H,Costant.NUM_AVG1H),Costant.NUM_GLOBAL_BOLT)
+
+        tp.setBolt(Costant.GLOBAL1H_AVG, new GlobalRankBolt(Costant.ID1H,Costant.NUM_AVG1H),Costant.NUM_GLOBAL_BOLT)
                 .shuffleGrouping(Costant.INTERMEDIATERANK_1H);
 
-        tp.setBolt(Costant.GLOBAL24H_AVG, new GlobalRank(Costant.ID24H,Costant.NUM_AVG24H),Costant.NUM_GLOBAL_BOLT)
+        tp.setBolt(Costant.GLOBAL24H_AVG, new GlobalRankBolt(Costant.ID24H,Costant.NUM_AVG24H),Costant.NUM_GLOBAL_BOLT)
                 .shuffleGrouping(Costant.INTERMEDIATERANK_24H);
         return tp.createTopology();
     }
@@ -91,9 +91,9 @@ public class TopologiaClassifica {
         tp.setBolt("filterBolt",new FilterBolt(),Costant.NUM_FILTER).shuffleGrouping("kafka_spout");
         tp.setBolt("avgBolt", new AvgBolt().withWindow(Duration.minutes(Costant.WINDOW_MIN),Duration.of(Costant.SEC_TUPLE)),Costant.NUM_AVG)
                 .fieldsGrouping("filterBolt", new Fields("id"));
-        tp.setBolt("intermediateRanking", new IntermediateRank(), Costant.NUM_INTERMEDIATERANK)
+        tp.setBolt("intermediateRanking", new IntermediateRankBolt(), Costant.NUM_INTERMEDIATERANK)
                 .fieldsGrouping("avgBolt",new Fields("id"));
-        tp.setBolt("globalRank", new GlobalRank(),1)
+        tp.setBolt("globalRank", new GlobalRankBolt(),1)
                 .allGrouping("intermediateRanking");
         return tp.createTopology();
     }

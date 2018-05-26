@@ -1,30 +1,36 @@
-package com.example.demo.query1.entity;
+package com.example.demo.entity;
 
 import com.example.demo.costant.Costant;
 import com.tdunning.math.stats.AVLTreeDigest;
 import com.tdunning.math.stats.TDigest;
 
+import java.util.Comparator;
 import java.util.List;
 
-public class Incrocio {
-    private List<SensoreSemaforo> l;
+public class Intersection implements Comparator<Intersection> {
+
+    private List<Sensor> l;
     private int id;
     private double VelocitaMedia;
     private double medianaVeicoli;
     private int numeroVeicoli;
-    private TDigest td1 ;
+    private TDigest td1;
 
-    public Incrocio(List<SensoreSemaforo> l, int id) {
+    public Intersection(){
+
+    }
+
+    public Intersection(List<Sensor> l, int id) {
         this.l = l;
         this.id = id;
         this.td1= new AVLTreeDigest(Costant.COMPRESSION);
     }
 
-    public List<SensoreSemaforo> getL() {
+    public List<Sensor> getL() {
         return l;
     }
 
-    public void setL(List<SensoreSemaforo> l) {
+    public void setL(List<Sensor> l) {
         this.l = l;
     }
 
@@ -72,5 +78,15 @@ public class Incrocio {
     @Override
     public String toString(){
         return "id="+this.id+" velMedia="+this.VelocitaMedia;
+    }
+
+    @Override
+    public int compare(Intersection intersection, Intersection t1) {
+        if ( intersection.getVelocitaMedia() > t1.getVelocitaMedia() )
+            return -1;
+        else if ( intersection.getVelocitaMedia() < t1.getVelocitaMedia() )
+            return 1;
+        else
+            return 0;
     }
 }
