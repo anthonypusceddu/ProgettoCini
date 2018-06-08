@@ -23,12 +23,24 @@ public class Costant {
     public static final int NUM_SUM_BOLT = 4;
     public static final String WEBSTER_BOLT = "websterBolt";
     public static final int NUM_WEBSTER_BOLT = 3;
+    public static final String MAP_INTERSECTION = "mapIntersection";
+    public static final String PHASE = "phase";
 
     // public static final String TOPIC_0 = "classifica";
     // public static final String TOPIC_1 = "mediana";
     //  public static final String KAFKA_LOCAL_BROKER = "localhost:9092";
 
     public static int N_INTERSECTIONS = 50;
+    public static int YELLOW_TIME = 4;
+    public static int CYCLE_TIME = 200;
+    public static int CHANGE_TIME = 5;  //i
+    public static int LOST_TIME= 3;
+    public static int ALL_RED = 1;
+    public static int THRESOLD_SATURATION = 7000;
+    public static int RANGE_SATURATION = 500;
+    public static int NUM_PHASE = 2;
+
+
     public static final int SEM_INTERSEC = 4;
     // QUERY 1 Costants
     public static final int WINDOW_MIN = 15;
@@ -85,4 +97,5 @@ public class Costant {
     public static final String ID15M = "15M";
     public static final String ID1H = "1H";
     public static final String ID24H = "24H";
+    public static int TIME_ERROR = 1;
 }

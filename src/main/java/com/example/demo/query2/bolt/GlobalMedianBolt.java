@@ -30,8 +30,6 @@ public class GlobalMedianBolt extends BaseRichBolt {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields(Costant.ID, Costant.LIST_INTERSECTION,Costant.MEDIAN));
-
-
     }
 
     @Override

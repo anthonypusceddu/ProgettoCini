@@ -15,6 +15,7 @@ public class Intersection implements Comparator<Intersection> {
     private double medianaVeicoli;
     private int numeroVeicoli;
     private TDigest td1;
+    private List<Phase> phases;
 
     public Intersection(){
 
@@ -88,5 +89,13 @@ public class Intersection implements Comparator<Intersection> {
             return 1;
         else
             return 0;
+    }
+
+    public List<Phase> getPhases() {
+        return phases;
+    }
+
+    public void setPhases(List<Phase> phases) {
+        this.phases = phases;
     }
 }

@@ -7,6 +7,7 @@ public class Sensor {
     private int trafficLight;
     private double speed;
     private int numVehicles;
+    private double saturation;
 
     public Sensor(int i, int s, double vel, int nv){
         this.intersection = i;
@@ -17,6 +18,7 @@ public class Sensor {
 
     public Sensor(){
     }
+
 
 
     public int getIntersection() {
@@ -57,4 +59,11 @@ public class Sensor {
         return "velocità "+this.speed +" num="+this.numVehicles;
     }
 
+    public double getSaturation() {
+        return saturation;
+    }
+
+    public void setSaturation(double saturation) {
+        this.saturation = saturation;
+    }
 }
