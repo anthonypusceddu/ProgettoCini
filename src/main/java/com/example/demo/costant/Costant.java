@@ -16,6 +16,13 @@ public class Costant {
 
     public static final String PARTIAL_RANK = "partialRank";
     public static final String RANK_TOPK = "rankTopK";
+    public static final String FILTER_CONTROL = "filterControl" ;
+    public static final int NUM_FILTER_CONTROL = 4;
+    public static final int NUM_SPOUT_CONTROL = 1;
+    public static final String SUM_BOLT = "sumBolt";
+    public static final int NUM_SUM_BOLT = 4;
+    public static final String WEBSTER_BOLT = "websterBolt";
+    public static final int NUM_WEBSTER_BOLT = 3;
 
     // public static final String TOPIC_0 = "classifica";
     // public static final String TOPIC_1 = "mediana";
