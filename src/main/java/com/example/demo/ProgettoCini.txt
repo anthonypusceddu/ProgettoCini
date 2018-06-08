@@ -1,0 +1,60 @@
+ATTORI: Sensori, AWS, amministratore
+
+STAKEHOLDERS: amministratore, professoressa, utenti del traffico
+
+NEED: monitoraggio e controllo del traffico
+
+REQUISITI: 
+-il sistema fornisce la classifica in tempo reale delle 10 intersezioni con la maggiore velocità media, in tre diverse finestre temporali:
+	-15 minuti
+	-1 ora ( 60 minuti )
+	-24 ore ( 1440 minuti )
+-il sistema fornisce le intersezioni aventi il valore della mediana del numero di veicoli che hanno attraversato l'incrocio, superiore al valore della mediana globale dei veicoli che hanno attraversato tutte le intersezioni. Tutto ciò calcolato nelle seguenti finestre temporali
+( in questo modo si trovano gli incroci più congestionati )
+	-15 minuti
+	-1 ora ( 60 minuti )
+	-24 ore ( 1440 minuti )
+
+-il sistema fornisce la sequenza di semafori che negli ultimi 5 minuti risulta più congestionata.
+
+-il sistema gestisce la durata della luce verde dei semafori in base al numero e alla velocità dei vicoli in transito
+
+-il sistema genera un allarme di malfunzionamento di un semaforo quando ha una lampada guasta.
+
+-il sistema permette di inserire, modificare, e rimuoreve un sensore di un semaforo
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+TUPLE: 
+
+SensoriFissi: 
+
+[id_incrocio, id_semaforo, long_semaforo, lat_semaforo, timeStamp_UTC, verde, N_veicoli, velocita_media, R,V,G] 
+1 ogni 60 secondi per ogni semaforo
+
+MediaPesata: Somma{stesso Incrocio}(Vm*Nv) / Ntot
+
+
+SensoriMobili:
+
+[id_veicolo, timestamp_UTC, long_veicolo, lat_veicolo, velocità_veicolo]  
+1 ogni 10 secondi per ogni veicolo
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ASSUNZIONI:
+
+I sensori generano sempre tuple e queste arrivano sincronizzate per ogni incrocio ogni 60 secondi.
+Ogni incrocio ha esattamente 4 semafori. Si può aggiungere o rimuovere un incrocio(quindi i relativi 4 semafori). 
+
+
+
+
+
+
+
+
